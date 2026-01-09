@@ -14,6 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
+      crypto_transactions: {
+        Row: {
+          amount: string
+          chain: string
+          confirmations: number | null
+          created_at: string
+          from_address: string
+          id: string
+          status: string
+          to_address: string
+          token: string
+          tx_hash: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: string
+          chain: string
+          confirmations?: number | null
+          created_at?: string
+          from_address: string
+          id?: string
+          status?: string
+          to_address: string
+          token: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: string
+          chain?: string
+          confirmations?: number | null
+          created_at?: string
+          from_address?: string
+          id?: string
+          status?: string
+          to_address?: string
+          token?: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          customer_email: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          seller_id: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          seller_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          seller_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -107,6 +202,51 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vault_positions: {
+        Row: {
+          apy: number | null
+          chain: string
+          created_at: string
+          current_shares: string | null
+          deposited_amount: string
+          id: string
+          status: string
+          token: string
+          updated_at: string
+          user_id: string
+          vault_address: string
+          vault_type: string
+        }
+        Insert: {
+          apy?: number | null
+          chain: string
+          created_at?: string
+          current_shares?: string | null
+          deposited_amount: string
+          id?: string
+          status?: string
+          token: string
+          updated_at?: string
+          user_id: string
+          vault_address: string
+          vault_type: string
+        }
+        Update: {
+          apy?: number | null
+          chain?: string
+          created_at?: string
+          current_shares?: string | null
+          deposited_amount?: string
+          id?: string
+          status?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
+          vault_address?: string
+          vault_type?: string
         }
         Relationships: []
       }

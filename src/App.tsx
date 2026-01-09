@@ -13,6 +13,7 @@ import Web3 from "./pages/Web3";
 import Yield from "./pages/Yield";
 import Bots from "./pages/Bots";
 import Settings from "./pages/Settings";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/yield" element={<ProtectedRoute><Yield /></ProtectedRoute>} />
             <Route path="/bots" element={<ProtectedRoute><Bots /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

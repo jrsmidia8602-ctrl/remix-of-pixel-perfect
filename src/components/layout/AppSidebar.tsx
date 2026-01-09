@@ -7,7 +7,8 @@ import {
   Bot, 
   Settings,
   ChevronLeft,
-  Zap
+  Zap,
+  Shield
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -38,6 +39,7 @@ const web3NavItems = [
 ];
 
 const settingsNavItems = [
+  { title: "Admin", url: "/admin", icon: Shield },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
