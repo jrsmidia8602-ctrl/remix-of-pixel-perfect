@@ -1,1 +1,10 @@
 project_id = "ggzdhmltktbcpuwgvljn"
+
+[functions.create-connect-account]
+verify_jwt = false
+
+[functions.check-connect-status]
+verify_jwt = false
+
+[functions.create-connect-login-link]
+verify_jwt = false
