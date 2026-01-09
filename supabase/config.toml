@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.create-connect-login-link]
 verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.list-stripe-payments]
+verify_jwt = false

@@ -3,35 +3,78 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, Plus, ArrowUpRight, ArrowDownRight, Percent, DollarSign } from "lucide-react";
-
-interface YieldPosition {
-  id: string;
-  protocol: string;
-  protocolIcon: string;
-  asset: string;
-  deposited: string;
-  currentValue: string;
-  apy: string;
-  earned: string;
-  chain: string;
-}
-
-const yieldPositions: YieldPosition[] = [
-  { id: "1", protocol: "Aave", protocolIcon: "A", asset: "USDC", deposited: "$50,000", currentValue: "$52,450", apy: "8.5%", earned: "$2,450", chain: "Base" },
-  { id: "2", protocol: "Compound", protocolIcon: "C", asset: "ETH", deposited: "20 ETH", currentValue: "20.8 ETH", apy: "4.2%", earned: "0.8 ETH", chain: "Ethereum" },
-  { id: "3", protocol: "Uniswap V3", protocolIcon: "U", asset: "ETH/USDC", deposited: "$30,000", currentValue: "$34,200", apy: "24.8%", earned: "$4,200", chain: "Base" },
-  { id: "4", protocol: "Curve", protocolIcon: "Cv", asset: "3pool", deposited: "$25,000", currentValue: "$26,100", apy: "6.8%", earned: "$1,100", chain: "Polygon" },
-];
-
-const protocolColors: Record<string, string> = {
-  Aave: "bg-crypto-purple",
-  Compound: "bg-crypto-green",
-  "Uniswap V3": "bg-crypto-pink",
-  Curve: "bg-crypto-blue",
-};
+import { Input } from "@/components/ui/input";
+import { useVaultContracts } from "@/hooks/useVaultContracts";
+import { TrendingUp, Plus, ArrowUpRight, ArrowDownRight, Percent, DollarSign, Wallet, Loader2, Zap, Coins } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Yield() {
+  const {
+    isConnected,
+    splitVault,
+    yieldVault,
+    depositToSplitVault,
+    withdrawFromSplitVault,
+    claimSplitRewards,
+    depositToYieldVault,
+    withdrawFromYieldVault,
+    harvestYield,
+    isPending,
+    contracts,
+  } = useVaultContracts();
+
+  const [splitDepositAmount, setSplitDepositAmount] = useState("");
+  const [splitWithdrawAmount, setSplitWithdrawAmount] = useState("");
+  const [yieldDepositAmount, setYieldDepositAmount] = useState("");
+  const [yieldWithdrawAmount, setYieldWithdrawAmount] = useState("");
+
+  const handleSplitDeposit = () => {
+    if (!splitDepositAmount || parseFloat(splitDepositAmount) <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
+    depositToSplitVault(splitDepositAmount);
+    toast.info("Transaction submitted...");
+  };
+
+  const handleSplitWithdraw = () => {
+    if (!splitWithdrawAmount || parseFloat(splitWithdrawAmount) <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
+    withdrawFromSplitVault(splitWithdrawAmount);
+    toast.info("Transaction submitted...");
+  };
+
+  const handleYieldDeposit = () => {
+    if (!yieldDepositAmount || parseFloat(yieldDepositAmount) <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
+    depositToYieldVault(yieldDepositAmount);
+    toast.info("Transaction submitted...");
+  };
+
+  const handleYieldWithdraw = () => {
+    if (!yieldWithdrawAmount || parseFloat(yieldWithdrawAmount) <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
+    withdrawFromYieldVault(yieldWithdrawAmount);
+    toast.info("Transaction submitted...");
+  };
+
+  const handleClaimRewards = () => {
+    claimSplitRewards();
+    toast.info("Claiming rewards...");
+  };
+
+  const handleHarvest = () => {
+    harvestYield();
+    toast.info("Harvesting yield...");
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -40,13 +83,14 @@ export default function Yield() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Yield Strategies</h1>
             <p className="text-muted-foreground">
-              Manage your DeFi positions and maximize returns.
+              Manage your XPEX vault positions and maximize returns.
             </p>
           </div>
-          <Button className="gap-2 gradient-success text-success-foreground hover:opacity-90">
-            <Plus className="h-4 w-4" />
-            New Position
-          </Button>
+          {!isConnected && (
+            <Badge variant="outline" className="border-warning text-warning">
+              Connect wallet to interact
+            </Badge>
+          )}
         </div>
 
         {/* Overview Stats */}
@@ -55,103 +99,236 @@ export default function Yield() {
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-crypto-cyan" />
-                <span className="text-sm text-muted-foreground">Total Deposited</span>
+                <span className="text-sm text-muted-foreground">Split Vault TVL</span>
               </div>
-              <div className="mt-2 text-2xl font-bold">$125,000</div>
+              <div className="mt-2 text-2xl font-bold">{parseFloat(splitVault.totalDeposits).toFixed(4)} ETH</div>
             </CardContent>
           </Card>
           <Card className="border-border bg-card/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-success" />
-                <span className="text-sm text-muted-foreground">Current Value</span>
+                <span className="text-sm text-muted-foreground">Yield Vault TVL</span>
               </div>
-              <div className="mt-2 text-2xl font-bold text-success">$132,750</div>
+              <div className="mt-2 text-2xl font-bold text-success">{parseFloat(yieldVault.totalAssets).toFixed(4)} ETH</div>
             </CardContent>
           </Card>
           <Card className="border-border bg-card/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <ArrowUpRight className="h-5 w-5 text-crypto-purple" />
-                <span className="text-sm text-muted-foreground">Total Earned</span>
+                <span className="text-sm text-muted-foreground">Pending Rewards</span>
               </div>
-              <div className="mt-2 text-2xl font-bold text-crypto-purple">$7,750</div>
+              <div className="mt-2 text-2xl font-bold text-crypto-purple">{parseFloat(splitVault.pendingRewards).toFixed(6)} ETH</div>
             </CardContent>
           </Card>
           <Card className="border-border bg-card/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <Percent className="h-5 w-5 text-crypto-cyan" />
-                <span className="text-sm text-muted-foreground">Avg APY</span>
+                <span className="text-sm text-muted-foreground">Current APY</span>
               </div>
-              <div className="mt-2 text-2xl font-bold">11.08%</div>
+              <div className="mt-2 text-2xl font-bold">{yieldVault.currentAPY.toFixed(2)}%</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Yield Positions */}
-        <div className="grid gap-4 lg:grid-cols-2">
-          {yieldPositions.map((position) => (
-            <Card key={position.id} className="border-border bg-card/50 hover:border-primary/50 transition-all">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full ${protocolColors[position.protocol]}`}>
-                      <span className="text-sm font-bold text-white">{position.protocolIcon}</span>
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{position.protocol}</CardTitle>
-                      <CardDescription>{position.asset}</CardDescription>
-                    </div>
+        {/* Vault Cards */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* XpexSplitVault */}
+          <Card className="border-border bg-card/50 hover:border-primary/50 transition-all">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-crypto-purple">
+                    <Coins className="h-5 w-5 text-white" />
                   </div>
-                  <Badge variant="outline" className="border-crypto-cyan/50 text-crypto-cyan">
-                    {position.chain}
-                  </Badge>
+                  <div>
+                    <CardTitle className="text-lg">XpexSplitVault</CardTitle>
+                    <CardDescription>Revenue splitting vault</CardDescription>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Deposited</p>
-                      <p className="text-lg font-semibold">{position.deposited}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Current Value</p>
-                      <p className="text-lg font-semibold text-success">{position.currentValue}</p>
-                    </div>
+                <Badge variant="outline" className="border-crypto-cyan/50 text-crypto-cyan">
+                  Base
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Your Balance</p>
+                    <p className="text-lg font-semibold">{parseFloat(splitVault.balance).toFixed(6)} ETH</p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">APY</span>
-                      <span className="font-semibold text-crypto-cyan">{position.apy}</span>
-                    </div>
-                    <Progress value={parseFloat(position.apy)} className="h-2" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Split Ratio</p>
+                    <p className="text-lg font-semibold text-success">{splitVault.splitRatio}%</p>
                   </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Pending Rewards</span>
+                    <span className="font-semibold text-crypto-cyan">{parseFloat(splitVault.pendingRewards).toFixed(6)} ETH</span>
+                  </div>
+                  <Progress value={Math.min(parseFloat(splitVault.pendingRewards) * 100, 100)} className="h-2" />
+                </div>
 
-                  <div className="flex items-center justify-between rounded-lg bg-success/10 p-3">
-                    <div className="flex items-center gap-2">
-                      <ArrowUpRight className="h-4 w-4 text-success" />
-                      <span className="text-sm text-muted-foreground">Earned</span>
-                    </div>
-                    <span className="font-semibold text-success">{position.earned}</span>
-                  </div>
-
+                {/* Deposit */}
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Deposit ETH</label>
                   <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1">
-                      <ArrowDownRight className="mr-2 h-4 w-4" />
-                      Withdraw
-                    </Button>
-                    <Button className="flex-1 gradient-primary text-primary-foreground">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add More
+                    <Input
+                      type="number"
+                      placeholder="0.0"
+                      value={splitDepositAmount}
+                      onChange={(e) => setSplitDepositAmount(e.target.value)}
+                      disabled={!isConnected || isPending}
+                    />
+                    <Button 
+                      onClick={handleSplitDeposit}
+                      disabled={!isConnected || isPending}
+                      className="gradient-primary text-primary-foreground"
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                {/* Withdraw */}
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Withdraw Shares</label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="0.0"
+                      value={splitWithdrawAmount}
+                      onChange={(e) => setSplitWithdrawAmount(e.target.value)}
+                      disabled={!isConnected || isPending}
+                    />
+                    <Button 
+                      variant="outline"
+                      onClick={handleSplitWithdraw}
+                      disabled={!isConnected || isPending}
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowDownRight className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full gradient-success text-success-foreground"
+                  onClick={handleClaimRewards}
+                  disabled={!isConnected || isPending || parseFloat(splitVault.pendingRewards) === 0}
+                >
+                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                  Claim Rewards
+                </Button>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  Contract: {contracts.splitVault.slice(0, 10)}...{contracts.splitVault.slice(-8)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* XpexYieldVault */}
+          <Card className="border-border bg-card/50 hover:border-accent/50 transition-all">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-crypto-green">
+                    <TrendingUp className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">XpexYieldVault</CardTitle>
+                    <CardDescription>Yield optimization vault</CardDescription>
+                  </div>
+                </div>
+                <Badge variant="outline" className="border-crypto-cyan/50 text-crypto-cyan">
+                  Base
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Your Shares</p>
+                    <p className="text-lg font-semibold">{parseFloat(yieldVault.balance).toFixed(6)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Current APY</p>
+                    <p className="text-lg font-semibold text-success">{yieldVault.currentAPY.toFixed(2)}%</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Total Assets</span>
+                    <span className="font-semibold text-crypto-cyan">{parseFloat(yieldVault.totalAssets).toFixed(4)} ETH</span>
+                  </div>
+                  <Progress value={Math.min(yieldVault.currentAPY, 100)} className="h-2" />
+                </div>
+
+                {/* Deposit */}
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Deposit ETH</label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="0.0"
+                      value={yieldDepositAmount}
+                      onChange={(e) => setYieldDepositAmount(e.target.value)}
+                      disabled={!isConnected || isPending}
+                    />
+                    <Button 
+                      onClick={handleYieldDeposit}
+                      disabled={!isConnected || isPending}
+                      className="gradient-accent text-accent-foreground"
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Withdraw */}
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Withdraw Shares</label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="0.0"
+                      value={yieldWithdrawAmount}
+                      onChange={(e) => setYieldWithdrawAmount(e.target.value)}
+                      disabled={!isConnected || isPending}
+                    />
+                    <Button 
+                      variant="outline"
+                      onClick={handleYieldWithdraw}
+                      disabled={!isConnected || isPending}
+                    >
+                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowDownRight className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full"
+                  variant="outline"
+                  onClick={handleHarvest}
+                  disabled={!isConnected || isPending}
+                >
+                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
+                  Harvest Yield
+                </Button>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  Contract: {contracts.yieldVault.slice(0, 10)}...{contracts.yieldVault.slice(-8)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </DashboardLayout>
