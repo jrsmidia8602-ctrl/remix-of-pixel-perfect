@@ -44,6 +44,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sellers: {
+        Row: {
+          business_name: string | null
+          charges_enabled: boolean | null
+          country: string | null
+          created_at: string
+          details_submitted: boolean | null
+          email: string | null
+          id: string
+          payouts_enabled: boolean | null
+          stripe_account_id: string | null
+          stripe_account_status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_name?: string | null
+          charges_enabled?: boolean | null
+          country?: string | null
+          created_at?: string
+          details_submitted?: boolean | null
+          email?: string | null
+          id?: string
+          payouts_enabled?: boolean | null
+          stripe_account_id?: string | null
+          stripe_account_status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_name?: string | null
+          charges_enabled?: boolean | null
+          country?: string | null
+          created_at?: string
+          details_submitted?: boolean | null
+          email?: string | null
+          id?: string
+          payouts_enabled?: boolean | null
+          stripe_account_id?: string | null
+          stripe_account_status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
