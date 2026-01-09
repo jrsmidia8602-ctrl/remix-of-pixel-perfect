@@ -1,4 +1,4 @@
-import { Bell, Search, Wallet, User, LogOut } from "lucide-react";
+import { Bell, Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { WalletConnect } from "@/components/WalletConnect";
 
 export function TopNav() {
   const { user, signOut } = useAuth();
@@ -35,17 +36,8 @@ export function TopNav() {
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Network Status */}
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5">
-          <div className="h-2 w-2 rounded-full bg-success animate-pulse-glow" />
-          <span className="text-sm text-muted-foreground">Base Mainnet</span>
-        </div>
-
-        {/* Connect Wallet Button */}
-        <Button variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
-          <Wallet className="h-4 w-4" />
-          <span>Connect Wallet</span>
-        </Button>
+        {/* Wallet Connect */}
+        <WalletConnect />
 
         {/* Notifications */}
         <DropdownMenu>
