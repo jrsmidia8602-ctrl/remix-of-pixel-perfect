@@ -14,3 +14,18 @@ verify_jwt = false
 
 [functions.list-stripe-payments]
 verify_jwt = false
+
+[functions.neural-brain]
+verify_jwt = false
+
+[functions.api-consumer-agent]
+verify_jwt = false
+
+[functions.payment-bot]
+verify_jwt = false
+
+[functions.volume-generator]
+verify_jwt = false
+
+[functions.api-marketplace]
+verify_jwt = false
