@@ -25,7 +25,22 @@ serve(async (req) => {
   try {
     logStep("Scheduler started");
     
-    const { action, agent_id } = await req.json();
+    // Support both JSON body and URL query params (for cron triggers)
+    let action = "run_scheduled_cycle"; // Default action for cron
+    let agent_id = null;
+    
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      try {
+        const body = await req.json();
+        action = body.action || action;
+        agent_id = body.agent_id || agent_id;
+      } catch {
+        // Use defaults if JSON parsing fails
+      }
+    }
+    
+    logStep("Action requested", { action, agent_id });
 
     switch (action) {
       case "activate_agent": {
