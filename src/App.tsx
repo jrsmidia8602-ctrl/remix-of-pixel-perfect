@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Sellers from "./pages/Sellers";
+import NeuralBrain from "./pages/NeuralBrain";
 import Payments from "./pages/Payments";
 import Web3 from "./pages/Web3";
 import Yield from "./pages/Yield";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/web3" element={<ProtectedRoute><Web3 /></ProtectedRoute>} />
             <Route path="/yield" element={<ProtectedRoute><Yield /></ProtectedRoute>} />
             <Route path="/bots" element={<ProtectedRoute><Bots /></ProtectedRoute>} />
+            <Route path="/neural-brain" element={<ProtectedRoute><NeuralBrain /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
