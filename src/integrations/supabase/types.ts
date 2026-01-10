@@ -682,6 +682,63 @@ export type Database = {
         }
         Relationships: []
       }
+      executions: {
+        Row: {
+          agent_id: string | null
+          api_product_id: string | null
+          completed_at: string | null
+          cost: number
+          created_at: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          response_time_ms: number | null
+          revenue: number
+          status: string
+        }
+        Insert: {
+          agent_id?: string | null
+          api_product_id?: string | null
+          completed_at?: string | null
+          cost?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          response_time_ms?: number | null
+          revenue?: number
+          status?: string
+        }
+        Update: {
+          agent_id?: string | null
+          api_product_id?: string | null
+          completed_at?: string | null
+          cost?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          response_time_ms?: number | null
+          revenue?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "autonomous_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executions_api_product_id_fkey"
+            columns: ["api_product_id"]
+            isOneToOne: false
+            referencedRelation: "api_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_opportunities: {
         Row: {
           actual_cost: number | null
