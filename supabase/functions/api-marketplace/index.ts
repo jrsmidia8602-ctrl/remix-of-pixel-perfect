@@ -34,7 +34,7 @@ interface ApiProduct {
 class ApiMarketplace {
   private supabase: ReturnType<typeof createClient>;
 
-  constructor(authToken?: string) {
+  constructor() {
     this.supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -48,8 +48,7 @@ class ApiMarketplace {
     limit?: number;
     offset?: number;
   }): Promise<{ products: unknown[]; total: number }> {
-    let query = this.supabase
-      .from("api_products")
+    let query = (this.supabase.from("api_products") as any)
       .select("*, sellers!inner(business_name, email)", { count: "exact" })
       .eq("is_active", filters?.isActive ?? true)
       .eq("is_public", true);
@@ -77,8 +76,7 @@ class ApiMarketplace {
   }
 
   async getProduct(productId: string): Promise<unknown> {
-    const { data, error } = await this.supabase
-      .from("api_products")
+    const { data, error } = await (this.supabase.from("api_products") as any)
       .select("*, sellers!inner(business_name, email)")
       .eq("id", productId)
       .single();
@@ -91,8 +89,7 @@ class ApiMarketplace {
   }
 
   async createProduct(sellerId: string, product: ApiProduct): Promise<{ id: string }> {
-    const { data, error } = await this.supabase
-      .from("api_products")
+    const { data, error } = await (this.supabase.from("api_products") as any)
       .insert({
         seller_id: sellerId,
         name: product.name,
@@ -125,12 +122,11 @@ class ApiMarketplace {
       throw new Error(`Failed to create product: ${error.message}`);
     }
 
-    return { id: data.id };
+    return { id: (data as any).id };
   }
 
   async updateProduct(productId: string, updates: Partial<ApiProduct>): Promise<{ success: boolean }> {
-    const { error } = await this.supabase
-      .from("api_products")
+    const { error } = await (this.supabase.from("api_products") as any)
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
@@ -145,8 +141,7 @@ class ApiMarketplace {
   }
 
   async deleteProduct(productId: string): Promise<{ success: boolean }> {
-    const { error } = await this.supabase
-      .from("api_products")
+    const { error } = await (this.supabase.from("api_products") as any)
       .update({ is_active: false })
       .eq("id", productId);
 
@@ -164,8 +159,7 @@ class ApiMarketplace {
     responseTime: number;
     error?: string;
   }> {
-    const { data: product, error: productError } = await this.supabase
-      .from("api_products")
+    const { data: product, error: productError } = await (this.supabase.from("api_products") as any)
       .select("*")
       .eq("id", productId)
       .single();
@@ -203,8 +197,8 @@ class ApiMarketplace {
       } else {
         errorMessage = `API returned ${response.status}: ${response.statusText}`;
       }
-    } catch (err) {
-      errorMessage = err.message;
+    } catch (err: unknown) {
+      errorMessage = (err as Error).message;
     }
 
     const responseTime = Date.now() - startTime;
@@ -214,13 +208,12 @@ class ApiMarketplace {
     await this.recordUsage(productId, consumerId, success, responseTime, cost);
 
     // Update product stats
-    await this.supabase
-      .from("api_products")
+    await (this.supabase.from("api_products") as any)
       .update({
-        total_calls: product.total_calls + 1,
-        successful_calls: product.successful_calls + (success ? 1 : 0),
-        failed_calls: product.failed_calls + (success ? 0 : 1),
-        total_revenue: Number(product.total_revenue) + (success ? cost : 0),
+        total_calls: (product.total_calls || 0) + 1,
+        successful_calls: (product.successful_calls || 0) + (success ? 1 : 0),
+        failed_calls: (product.failed_calls || 0) + (success ? 0 : 1),
+        total_revenue: Number(product.total_revenue || 0) + (success ? cost : 0),
       })
       .eq("id", productId);
 
@@ -242,8 +235,7 @@ class ApiMarketplace {
     const hourAgo = new Date(now.getTime() - 3600000);
 
     // Check per-minute rate limit
-    const { count: minuteCount } = await this.supabase
-      .from("api_usage_metrics")
+    const { count: minuteCount } = await (this.supabase.from("api_usage_metrics") as any)
       .select("*", { count: "exact", head: true })
       .eq("api_product_id", productId)
       .eq("consumer_id", consumerId)
@@ -255,8 +247,7 @@ class ApiMarketplace {
     }
 
     // Check per-hour rate limit
-    const { count: hourCount } = await this.supabase
-      .from("api_usage_metrics")
+    const { count: hourCount } = await (this.supabase.from("api_usage_metrics") as any)
       .select("*", { count: "exact", head: true })
       .eq("api_product_id", productId)
       .eq("consumer_id", consumerId)
@@ -291,8 +282,7 @@ class ApiMarketplace {
     const now = new Date();
     const hourWindow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
 
-    const { data: existing } = await this.supabase
-      .from("api_usage_metrics")
+    const { data: existing } = await (this.supabase.from("api_usage_metrics") as any)
       .select("*")
       .eq("api_product_id", productId)
       .eq("consumer_id", consumerId)
@@ -300,22 +290,20 @@ class ApiMarketplace {
       .single();
 
     if (existing) {
-      await this.supabase
-        .from("api_usage_metrics")
+      await (this.supabase.from("api_usage_metrics") as any)
         .update({
-          call_count: existing.call_count + 1,
-          success_count: existing.success_count + (success ? 1 : 0),
-          error_count: existing.error_count + (success ? 0 : 1),
+          call_count: (existing.call_count || 0) + 1,
+          success_count: (existing.success_count || 0) + (success ? 1 : 0),
+          error_count: (existing.error_count || 0) + (success ? 0 : 1),
           avg_response_time_ms: 
-            (existing.avg_response_time_ms * existing.call_count + responseTime) / 
-            (existing.call_count + 1),
-          total_cost: Number(existing.total_cost) + cost,
-          total_revenue: Number(existing.total_revenue) + (success ? cost : 0),
+            ((existing.avg_response_time_ms || 0) * (existing.call_count || 0) + responseTime) / 
+            ((existing.call_count || 0) + 1),
+          total_cost: Number(existing.total_cost || 0) + cost,
+          total_revenue: Number(existing.total_revenue || 0) + (success ? cost : 0),
         })
         .eq("id", existing.id);
     } else {
-      await this.supabase
-        .from("api_usage_metrics")
+      await (this.supabase.from("api_usage_metrics") as any)
         .insert({
           api_product_id: productId,
           consumer_id: consumerId,
@@ -340,8 +328,7 @@ class ApiMarketplace {
   }> {
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-    const { data: metrics } = await this.supabase
-      .from("api_usage_metrics")
+    const { data: metrics } = await (this.supabase.from("api_usage_metrics") as any)
       .select("*")
       .eq("api_product_id", productId)
       .gte("time_window", startDate.toISOString())
@@ -357,19 +344,21 @@ class ApiMarketplace {
       };
     }
 
-    const totalCalls = metrics.reduce((sum, m) => sum + m.call_count, 0);
-    const successCalls = metrics.reduce((sum, m) => sum + m.success_count, 0);
-    const totalRevenue = metrics.reduce((sum, m) => sum + Number(m.total_revenue || 0), 0);
-    const avgResponseTime = metrics.reduce((sum, m) => sum + m.avg_response_time_ms * m.call_count, 0) / totalCalls;
+    const totalCalls = metrics.reduce((sum: number, m: any) => sum + (m.call_count || 0), 0);
+    const successCalls = metrics.reduce((sum: number, m: any) => sum + (m.success_count || 0), 0);
+    const totalRevenue = metrics.reduce((sum: number, m: any) => sum + Number(m.total_revenue || 0), 0);
+    const avgResponseTime = totalCalls > 0 
+      ? metrics.reduce((sum: number, m: any) => sum + (m.avg_response_time_ms || 0) * (m.call_count || 0), 0) / totalCalls 
+      : 0;
 
     // Group by day
     const dailyMap = new Map<string, { calls: number; success: number; revenue: number }>();
-    metrics.forEach(m => {
+    metrics.forEach((m: any) => {
       const day = new Date(m.time_window).toISOString().split("T")[0];
       const existing = dailyMap.get(day) || { calls: 0, success: 0, revenue: 0 };
       dailyMap.set(day, {
-        calls: existing.calls + m.call_count,
-        success: existing.success + m.success_count,
+        calls: existing.calls + (m.call_count || 0),
+        success: existing.success + (m.success_count || 0),
         revenue: existing.revenue + Number(m.total_revenue || 0),
       });
     });
@@ -506,7 +495,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
+  } catch (err: unknown) {
+    const error = err as Error;
     console.error("API Marketplace Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

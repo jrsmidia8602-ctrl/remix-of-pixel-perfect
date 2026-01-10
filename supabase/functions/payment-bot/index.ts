@@ -33,7 +33,7 @@ class PaymentBot {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    this.stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
+    this.stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
     });
   }
@@ -41,8 +41,8 @@ class PaymentBot {
   async processPaymentQueue(): Promise<{ processed: number; failed: number }> {
     console.log("💰 Processing payment queue...");
 
-    const { data: pendingPayments, error } = await this.supabase
-      .from("pending_payments")
+    const { data: pendingPayments, error } = await (this.supabase
+      .from("pending_payments") as any)
       .select("*")
       .eq("status", "pending")
       .lte("scheduled_for", new Date().toISOString())
@@ -60,8 +60,9 @@ class PaymentBot {
       try {
         await this.executePayment(payment);
         processed++;
-      } catch (err) {
-        console.error(`Payment ${payment.id} failed:`, err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`Payment ${payment.id} failed:`, error);
         failed++;
       }
     }
@@ -73,8 +74,7 @@ class PaymentBot {
     console.log(`💸 Processing payment: ${payment.id} for $${payment.amount}`);
 
     // Update status to processing
-    await this.supabase
-      .from("pending_payments")
+    await (this.supabase.from("pending_payments") as any)
       .update({ status: "processing" })
       .eq("id", payment.id);
 
@@ -90,8 +90,7 @@ class PaymentBot {
       }
 
       // Update payment status
-      await this.supabase
-        .from("pending_payments")
+      await (this.supabase.from("pending_payments") as any)
         .update({
           status: "completed",
           completed_at: new Date().toISOString(),
@@ -112,11 +111,11 @@ class PaymentBot {
       console.log(`✅ Payment ${payment.id} completed successfully`);
       return result;
 
-    } catch (error) {
+    } catch (err: unknown) {
+      const error = err as Error;
       console.error(`❌ Payment ${payment.id} failed:`, error);
 
-      await this.supabase
-        .from("pending_payments")
+      await (this.supabase.from("pending_payments") as any)
         .update({
           status: "failed",
           error_message: error.message,
@@ -131,8 +130,8 @@ class PaymentBot {
   }
 
   private async processStripePayment(payment: Record<string, unknown>): Promise<PaymentResult> {
-    const { data: seller } = await this.supabase
-      .from("sellers")
+    const { data: seller } = await (this.supabase
+      .from("sellers") as any)
       .select("stripe_account_id")
       .eq("id", payment.seller_id)
       .single();
@@ -190,8 +189,7 @@ class PaymentBot {
   }
 
   private async recordPaymentRevenue(payment: Record<string, unknown>, result: PaymentResult) {
-    await this.supabase
-      .from("autonomous_revenue")
+    await (this.supabase.from("autonomous_revenue") as any)
       .insert({
         revenue_source: "payment_fees",
         transaction_id: result.transactionId,
@@ -199,7 +197,7 @@ class PaymentBot {
         currency: (payment.currency as string) || "USD",
         platform_fee: result.platformFee,
         seller_amount: result.amount - result.platformFee,
-        revenue_date: new Date().toISOString(),
+        revenue_date: new Date().toISOString().split("T")[0],
         status: "collected",
         metadata: {
           payment_id: payment.id,
@@ -233,8 +231,7 @@ class PaymentBot {
 
     // Record yield strategies
     for (const opp of opportunities.slice(0, 2)) {
-      await this.supabase
-        .from("yield_strategies")
+      await (this.supabase.from("yield_strategies") as any)
         .insert({
           wallet_id: "system",
           chain_id: 8453,
@@ -286,8 +283,7 @@ class PaymentBot {
 
     // Record profitable opportunities
     for (const opp of opportunities.filter(o => o.profit > 0.001)) {
-      await this.supabase
-        .from("arbitrage_opportunities")
+      await (this.supabase.from("arbitrage_opportunities") as any)
         .insert({
           buy_chain: opp.buyChain,
           sell_chain: opp.sellChain,
@@ -310,8 +306,7 @@ class PaymentBot {
     purpose?: string;
     scheduledFor?: string;
   }): Promise<{ id: string }> {
-    const { data, error } = await this.supabase
-      .from("pending_payments")
+    const { data, error } = await (this.supabase.from("pending_payments") as any)
       .insert({
         seller_id: paymentData.sellerId,
         amount: paymentData.amount,
@@ -328,7 +323,7 @@ class PaymentBot {
       throw new Error(`Failed to schedule payment: ${error.message}`);
     }
 
-    return { id: data.id };
+    return { id: (data as any).id };
   }
 
   getStats() {
@@ -394,7 +389,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
+  } catch (err: unknown) {
+    const error = err as Error;
     console.error("Payment Bot Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
