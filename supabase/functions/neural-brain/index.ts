@@ -56,8 +56,8 @@ class NeuralBrain {
     console.log("🧠 Initializing Neural Brain...");
 
     // Load active agents from database
-    const { data: agents, error } = await this.supabase
-      .from("autonomous_agents")
+    const { data: agents, error } = await (this.supabase
+      .from("autonomous_agents") as any)
       .select("*")
       .in("status", ["active", "idle"]);
 
@@ -66,14 +66,14 @@ class NeuralBrain {
       return;
     }
 
-    agents?.forEach((agent) => {
+    agents?.forEach((agent: any) => {
       this.agents.set(agent.id, {
         id: agent.id,
         type: agent.agent_type,
         capabilities: agent.capabilities || [],
         status: agent.status,
         performance: agent.performance_score || 0.5,
-        lastActive: new Date(agent.last_active_at),
+        lastActive: new Date(agent.last_active_at || Date.now()),
         wallet: agent.wallet_address || "",
         budget: agent.daily_budget || 100,
       });
@@ -88,8 +88,8 @@ class NeuralBrain {
     this.opportunities = [];
 
     // Fetch all active API products
-    const { data: apiProducts, error } = await this.supabase
-      .from("api_products")
+    const { data: apiProducts, error } = await (this.supabase
+      .from("api_products") as any)
       .select("*")
       .eq("is_active", true);
 
@@ -105,15 +105,15 @@ class NeuralBrain {
         this.opportunities.push(opportunity);
         
         // Store in database
-        await this.supabase.from("market_opportunities").insert({
+        await (this.supabase.from("market_opportunities") as any).insert({
           api_product_id: opportunity.apiProductId,
           demand_score: opportunity.demandScore,
           competition_score: opportunity.competition,
           complexity_score: opportunity.executionComplexity,
           potential_revenue: opportunity.potentialRevenue,
           estimated_cost: opportunity.potentialRevenue * 0.2,
-          time_window_start: new Date(),
-          time_window_end: opportunity.timeWindow,
+          time_window_start: new Date().toISOString(),
+          time_window_end: opportunity.timeWindow.toISOString(),
           status: "detected",
           analysis_data: {
             analyzed_at: new Date().toISOString(),
@@ -132,16 +132,16 @@ class NeuralBrain {
 
   async analyzeProductOpportunity(product: Record<string, unknown>): Promise<MarketOpportunity> {
     // Get product usage metrics
-    const { data: metrics } = await this.supabase
-      .from("api_usage_metrics")
+    const { data: metrics } = await (this.supabase
+      .from("api_usage_metrics") as any)
       .select("*")
       .eq("api_product_id", product.id)
       .order("created_at", { ascending: false })
       .limit(100);
 
-    const totalCalls = metrics?.reduce((sum, m) => sum + (m.call_count || 0), 0) || 0;
+    const totalCalls = metrics?.reduce((sum: number, m: any) => sum + (m.call_count || 0), 0) || 0;
     const avgSuccessRate = metrics && metrics.length > 0
-      ? metrics.reduce((sum, m) => sum + ((m.success_count || 0) / Math.max(m.call_count || 1, 1)), 0) / metrics.length
+      ? metrics.reduce((sum: number, m: any) => sum + ((m.success_count || 0) / Math.max(m.call_count || 1, 1)), 0) / metrics.length
       : 0.8;
 
     // Calculate demand score based on usage patterns
@@ -215,7 +215,7 @@ class NeuralBrain {
     this.tasks.set(task.id, task);
 
     // Store task in database
-    await this.supabase.from("brain_tasks").insert({
+    await (this.supabase.from("brain_tasks") as any).insert({
       task_type: taskType,
       priority: task.priority,
       target_api_id: task.target,
@@ -228,8 +228,7 @@ class NeuralBrain {
     });
 
     // Update agent status
-    await this.supabase
-      .from("autonomous_agents")
+    await (this.supabase.from("autonomous_agents") as any)
       .update({
         status: "active",
         current_task_id: task.id,
@@ -246,8 +245,8 @@ class NeuralBrain {
   async optimizeAgents(): Promise<{ optimizations: number; allocations: Record<string, string> }> {
     console.log("⚡ Optimizing agent allocation...");
 
-    const { data: performance } = await this.supabase
-      .from("agent_performance")
+    const { data: performance } = await (this.supabase
+      .from("agent_performance") as any)
       .select("*")
       .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
@@ -255,7 +254,7 @@ class NeuralBrain {
     const revenueByType: Record<string, number> = {};
 
     // Calculate revenue per agent type
-    performance?.forEach(p => {
+    performance?.forEach((p: any) => {
       const type = p.metadata?.agent_type || "api_consumer";
       revenueByType[type] = (revenueByType[type] || 0) + (p.total_revenue || 0);
     });
@@ -286,20 +285,19 @@ class NeuralBrain {
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    const { data: revenue } = await this.supabase
-      .from("autonomous_revenue")
+    const { data: revenue } = await (this.supabase
+      .from("autonomous_revenue") as any)
       .select("*")
       .gte("revenue_date", yesterday.toISOString());
 
-    const totalRevenue = revenue?.reduce((sum, r) => sum + Number(r.amount || 0), 0) || 0;
-    const platformFees = revenue?.reduce((sum, r) => sum + Number(r.platform_fee || 0), 0) || 0;
-    const agentCount = this.agents.size;
+    const totalRevenue = revenue?.reduce((sum: number, r: any) => sum + Number(r.amount || 0), 0) || 0;
+    const platformFees = revenue?.reduce((sum: number, r: any) => sum + Number(r.platform_fee || 0), 0) || 0;
     const activeTasks = Array.from(this.tasks.values()).filter(t =>
       new Date(t.deadline) > new Date()
     ).length;
 
     const report = {
-      timestamp: now.toISOString(),
+      generated_at: now.toISOString(),
       period_start: yesterday.toISOString(),
       period_end: now.toISOString(),
       report_type: "daily",
@@ -323,7 +321,7 @@ class NeuralBrain {
     };
 
     // Store report
-    await this.supabase.from("brain_reports").insert(report);
+    await (this.supabase.from("brain_reports") as any).insert(report);
 
     return report;
   }
@@ -467,7 +465,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
+  } catch (err: unknown) {
+    const error = err as Error;
     console.error("Neural Brain Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

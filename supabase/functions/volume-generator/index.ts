@@ -152,7 +152,8 @@ class VolumeGenerator {
           await new Promise(resolve => setTimeout(resolve, Math.random() * 200));
         }
 
-      } catch (error) {
+      } catch (err: unknown) {
+        const error = err as Error;
         console.error(`Call failed for ${profile.name}:`, error);
         failed++;
         this.stats.totalCalls++;
@@ -171,8 +172,8 @@ class VolumeGenerator {
     const startTime = Date.now();
     
     // Try to get actual API configuration
-    const { data: apiConfig } = await this.supabase
-      .from("api_products")
+    const { data: apiConfig } = await (this.supabase
+      .from("api_products") as any)
       .select("*")
       .eq("id", apiId)
       .single();
@@ -199,7 +200,7 @@ class VolumeGenerator {
         if (success) {
           data = await response.json();
         }
-      } catch (error) {
+      } catch {
         responseTime = Date.now() - startTime;
         success = false;
       }
@@ -227,8 +228,7 @@ class VolumeGenerator {
     payload: Record<string, unknown>,
     result: { success: boolean; cost: number; responseTime: number }
   ): Promise<void> {
-    await this.supabase
-      .from("volume_generation_logs")
+    await (this.supabase.from("volume_generation_logs") as any)
       .insert({
         profile_id: profile.id,
         api_id: profile.targetApi,
@@ -269,14 +269,14 @@ class VolumeGenerator {
     const today = new Date().toISOString().split("T")[0];
 
     for (const [profileId, profile] of this.profiles) {
-      const { data: todaySpend } = await this.supabase
-        .from("volume_generation_logs")
+      const { data: todaySpend } = await (this.supabase
+        .from("volume_generation_logs") as any)
         .select("cost")
         .eq("profile_id", profileId)
         .gte("generated_at", `${today}T00:00:00Z`)
         .lte("generated_at", `${today}T23:59:59Z`);
 
-      const totalSpent = todaySpend?.reduce((sum, log) => sum + Number(log.cost || 0), 0) || 0;
+      const totalSpent = todaySpend?.reduce((sum: number, log: any) => sum + Number(log.cost || 0), 0) || 0;
 
       results.push({
         id: profileId,
@@ -313,8 +313,7 @@ class VolumeGenerator {
       : 0;
 
     // Store performance record
-    await this.supabase
-      .from("brain_reports")
+    await (this.supabase.from("brain_reports") as any)
       .insert({
         report_type: "hourly",
         period_start: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
@@ -413,7 +412,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
+  } catch (err: unknown) {
+    const error = err as Error;
     console.error("Volume Generator Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

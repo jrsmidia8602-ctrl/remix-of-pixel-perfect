@@ -158,6 +158,118 @@ class APIConsumerAgent {
 
     return { cost, revenue, metrics: { responseTime, statusCode: response.status, dataSize: JSON.stringify(data).length, timestamp: new Date().toISOString() } };
   }
+
+  private getAuthHeaders(apiProduct: Record<string, unknown>): Record<string, string> {
+    const authMethod = apiProduct.auth_method as string;
+    const credentials = apiProduct.auth_credentials as Record<string, string> | undefined;
+
+    if (authMethod === "api_key" && credentials?.api_key) {
+      return { "Authorization": `Bearer ${credentials.api_key}` };
+    }
+
+    if (authMethod === "oauth2" && credentials?.access_token) {
+      return { "Authorization": `Bearer ${credentials.access_token}` };
+    }
+
+    if (authMethod === "jwt" && credentials?.token) {
+      return { "Authorization": `Bearer ${credentials.token}` };
+    }
+
+    return {};
+  }
+
+  private generateRequestBody(template: Record<string, unknown>): Record<string, unknown> {
+    const body: Record<string, unknown> = {};
+    
+    for (const [key, value] of Object.entries(template)) {
+      if (typeof value === "string" && value.startsWith("{{") && value.endsWith("}}")) {
+        const placeholder = value.slice(2, -2).trim();
+        if (placeholder === "timestamp") {
+          body[key] = new Date().toISOString();
+        } else if (placeholder === "random") {
+          body[key] = Math.random().toString(36).substring(7);
+        } else if (placeholder === "agent_id") {
+          body[key] = this.config.id;
+        } else {
+          body[key] = value;
+        }
+      } else {
+        body[key] = value;
+      }
+    }
+
+    return body;
+  }
+
+  private calculateRevenueFromData(data: unknown, cost: number): number {
+    // Calculate potential revenue based on data quality/value
+    // This is a simplified model - real implementation would analyze data utility
+    const baseRevenue = cost * 1.5; // 50% markup
+    
+    if (typeof data === "object" && data !== null) {
+      const dataSize = JSON.stringify(data).length;
+      const qualityBonus = Math.min(dataSize / 1000, 0.5); // Up to 50% bonus for larger responses
+      return baseRevenue * (1 + qualityBonus);
+    }
+
+    return baseRevenue;
+  }
+
+  private async recordApiUsage(apiId: string, responseTime: number, success: boolean): Promise<void> {
+    const now = new Date();
+    const hourWindow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
+
+    await (this.supabase.from("api_usage_metrics") as any)
+      .insert({
+        api_product_id: apiId,
+        consumer_id: this.config.id,
+        time_window: hourWindow.toISOString(),
+        time_granularity: "hour",
+        call_count: 1,
+        success_count: success ? 1 : 0,
+        error_count: success ? 0 : 1,
+        avg_response_time_ms: responseTime,
+        total_cost: success ? 0.001 : 0,
+        total_revenue: success ? 0.001 : 0,
+      });
+  }
+
+  private async recordRevenue(task: Record<string, unknown>, result: { cost: number; revenue: number }): Promise<void> {
+    await (this.supabase.from("autonomous_revenue") as any)
+      .insert({
+        agent_id: this.config.id,
+        task_id: task.id,
+        revenue_source: "api_calls",
+        amount: result.revenue,
+        currency: "USD",
+        revenue_date: new Date().toISOString().split("T")[0],
+        platform_fee: result.revenue * 0.1,
+        seller_amount: result.revenue * 0.7,
+        agent_reward: result.revenue * 0.2,
+        status: "pending",
+        metadata: {
+          cost: result.cost,
+          net_profit: result.revenue - result.cost,
+        }
+      });
+  }
+
+  private async updateAgentStats(): Promise<void> {
+    const successRate = this.performanceStats.totalCalls > 0
+      ? this.performanceStats.successfulCalls / this.performanceStats.totalCalls
+      : 0;
+
+    await (this.supabase.from("autonomous_agents") as any)
+      .update({
+        total_tasks_completed: this.performanceStats.successfulCalls,
+        total_revenue_generated: this.performanceStats.totalRevenue,
+        success_rate: successRate,
+        performance_score: successRate * 0.7 + 0.3, // Weight success rate
+        last_active_at: new Date().toISOString(),
+        last_heartbeat_at: new Date().toISOString(),
+      })
+      .eq("id", this.config.id);
+  }
 }
 
 serve(async (req) => {
@@ -209,8 +321,8 @@ serve(async (req) => {
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
       );
 
-      const { data, error } = await supabase
-        .from("autonomous_agents")
+      const { data, error } = await (supabase
+        .from("autonomous_agents") as any)
         .select("*")
         .eq("id", agentId)
         .single();
