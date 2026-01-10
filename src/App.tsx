@@ -15,6 +15,7 @@ import Yield from "./pages/Yield";
 import Bots from "./pages/Bots";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
+import SystemAudit from "./pages/SystemAudit";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/neural-brain" element={<ProtectedRoute><NeuralBrain /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            <Route path="/system-audit" element={<ProtectedRoute><SystemAudit /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
