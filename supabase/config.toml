@@ -32,3 +32,9 @@ verify_jwt = false
 
 [functions.api-marketplace]
 verify_jwt = false
+
+[functions.billing-trigger]
+verify_jwt = false
+
+[functions.agent-scheduler]
+verify_jwt = false
