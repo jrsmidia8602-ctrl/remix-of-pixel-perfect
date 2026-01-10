@@ -1,5 +1,8 @@
 project_id = "ggzdhmltktbcpuwgvljn"
 
+[functions.system-audit]
+verify_jwt = false
+
 [functions.create-connect-account]
 verify_jwt = false
 
