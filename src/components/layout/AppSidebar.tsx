@@ -9,7 +9,8 @@ import {
   ChevronLeft,
   Zap,
   Shield,
-  Brain
+  Brain,
+  Flame
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -34,6 +35,7 @@ const mainNavItems = [
 ];
 
 const web3NavItems = [
+  { title: "Phoenix Control", url: "/phoenix", icon: Flame },
   { title: "Neural Brain", url: "/neural-brain", icon: Brain },
   { title: "Web3 Wallet", url: "/web3", icon: Wallet },
   { title: "Yield Strategies", url: "/yield", icon: TrendingUp },

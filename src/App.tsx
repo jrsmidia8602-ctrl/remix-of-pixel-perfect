@@ -16,6 +16,7 @@ import Bots from "./pages/Bots";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
 import SystemAudit from "./pages/SystemAudit";
+import Phoenix from "./pages/Phoenix";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="/system-audit" element={<ProtectedRoute><SystemAudit /></ProtectedRoute>} />
+            <Route path="/phoenix" element={<ProtectedRoute><Phoenix /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
