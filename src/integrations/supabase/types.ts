@@ -64,6 +64,63 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          daily_budget: number | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          owner_id: string | null
+          permissions: string[] | null
+          rate_limit_per_hour: number | null
+          rate_limit_per_minute: number | null
+          total_executions: number | null
+          total_spent: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          daily_budget?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          owner_id?: string | null
+          permissions?: string[] | null
+          rate_limit_per_hour?: number | null
+          rate_limit_per_minute?: number | null
+          total_executions?: number | null
+          total_spent?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          daily_budget?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          owner_id?: string | null
+          permissions?: string[] | null
+          rate_limit_per_hour?: number | null
+          rate_limit_per_minute?: number | null
+          total_executions?: number | null
+          total_spent?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       api_products: {
         Row: {
           active_consumers: number | null
@@ -681,6 +738,54 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      execution_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          details: Json | null
+          duration_ms: number | null
+          execution_id: string | null
+          id: string
+          status: string
+          step: string
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          execution_id?: string | null
+          id?: string
+          status: string
+          step: string
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          execution_id?: string | null
+          id?: string
+          status?: string
+          step?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execution_logs_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       executions: {
         Row: {
