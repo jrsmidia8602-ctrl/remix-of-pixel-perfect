@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
 import SystemAudit from "./pages/SystemAudit";
 import Phoenix from "./pages/Phoenix";
+import ControlCenter from "./pages/ControlCenter";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="/system-audit" element={<ProtectedRoute><SystemAudit /></ProtectedRoute>} />
             <Route path="/phoenix" element={<ProtectedRoute><Phoenix /></ProtectedRoute>} />
+            <Route path="/control" element={<ProtectedRoute><ControlCenter /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
