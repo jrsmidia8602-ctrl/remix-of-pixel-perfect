@@ -172,17 +172,32 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const path = url.pathname;
+    let path = url.pathname;
     const apiKey = req.headers.get("x-api-key");
+    
+    // Parse body for POST requests
+    let body: Record<string, unknown> = {};
+    if (req.method === "POST") {
+      try {
+        body = await req.json();
+        // Check if path is specified in body
+        if (body.path && typeof body.path === "string") {
+          path = body.path;
+        }
+      } catch {
+        // Body parsing failed
+      }
+    }
 
     logStep("Request received", { path, method: req.method });
 
-    // Root endpoint - API info
-    if (path === "/" || path === "") {
+    // Root endpoint - API info (handle both "/" and function path)
+    if (path === "/" || path === "" || path === "/phoenix-api" || !path.startsWith("/v1")) {
       return new Response(
         JSON.stringify({
           name: "Phoenix Execution API",
           version: "1.0.0",
+          status: "operational",
           owner: "XPEC Systems",
           endpoints: {
             execute: "POST /v1/execute",
@@ -215,10 +230,11 @@ serve(async (req) => {
       const keyRecord = authResult.keyRecord!;
 
       // POST /v1/execute - Submit execution request
-      if (path === "/v1/execute" && req.method === "POST") {
+      if (path === "/v1/execute") {
         const startTime = Date.now();
-        const body = await req.json();
-        const { task_type = "data", payload = {}, priority = 5 } = body;
+        const task_type = (body.task_type as string) || "data";
+        const payload = body.payload || {};
+        const priority = (body.priority as number) || 5;
 
         logStep("Execute request", { task_type, priority });
 

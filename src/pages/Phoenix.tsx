@@ -32,7 +32,7 @@ export default function Phoenix() {
     queryKey: ["phoenix-status"],
     queryFn: async () => {
       const response = await supabase.functions.invoke("phoenix-api", {
-        headers: apiKey ? { "x-api-key": apiKey } : {},
+        body: {},
       });
       return response.data;
     },
@@ -61,15 +61,14 @@ export default function Phoenix() {
         throw new Error("API Key is required");
       }
 
-      const response = await supabase.functions.invoke("phoenix-api/v1/execute", {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          "Content-Type": "application/json",
-        },
+      const response = await supabase.functions.invoke("phoenix-api", {
         body: {
+          path: "/v1/execute",
           task_type: taskType,
           priority: priority,
+        },
+        headers: {
+          "x-api-key": apiKey,
         },
       });
 

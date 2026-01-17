@@ -74,7 +74,9 @@ export function useSystemAudit(autoRefresh = true, refreshInterval = 30000) {
       setLoading(true);
       setError(null);
 
-      const { data, error: fnError } = await supabase.functions.invoke("system-audit/full");
+      const { data, error: fnError } = await supabase.functions.invoke("system-audit", {
+        body: { path: "full" },
+      });
 
       if (fnError) throw fnError;
       setAuditData(data);
@@ -89,8 +91,8 @@ export function useSystemAudit(autoRefresh = true, refreshInterval = 30000) {
 
   const runRemediation = useCallback(async (action: string, params?: Record<string, unknown>) => {
     try {
-      const { data, error: fnError } = await supabase.functions.invoke("system-audit/remediate", {
-        body: { action, params },
+      const { data, error: fnError } = await supabase.functions.invoke("system-audit", {
+        body: { path: "remediate", action, params },
       });
 
       if (fnError) throw fnError;
