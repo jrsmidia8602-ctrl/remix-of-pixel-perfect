@@ -7,6 +7,9 @@ import { BrainStatsCards } from "@/components/neural/BrainStatsCards";
 import { AgentStatusCard } from "@/components/neural/AgentStatusCard";
 import { TaskMonitorTable } from "@/components/neural/TaskMonitorTable";
 import { OpportunityTracker } from "@/components/neural/OpportunityTracker";
+import { RealtimeMonitor } from "@/components/neural/RealtimeMonitor";
+import { RevenueHeatmap } from "@/components/neural/RevenueHeatmap";
+import { AgentPerformanceChart } from "@/components/neural/AgentPerformanceChart";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function NeuralBrain() {
@@ -84,6 +87,13 @@ export default function NeuralBrain() {
         ) : (
           <BrainStatsCards stats={stats} />
         )}
+
+        {/* Realtime Monitoring Section */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <RealtimeMonitor />
+          <RevenueHeatmap />
+          <AgentPerformanceChart />
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
