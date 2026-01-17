@@ -1,0 +1,129 @@
+{
+  "name": "XPEX Neural OS",
+  "version": "1.0.0",
+  "description": "Plataforma de Agentes Autônomos com Orquestração Inteligente e Economia de Agentes",
+  "repository": {
+    "url": "https://github.com/seu-usuario/xpex-neural",
+    "branch": "main",
+    "deploy": {
+      "platform": "Vercel",
+      "runtime": "Node.js",
+      "build_script": "npm run build",
+      "start_script": "npm run start",
+      "env_variables": {
+        "SUPABASE_URL": "$SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY": "$SUPABASE_SERVICE_ROLE_KEY",
+        "STRIPE_SECRET_KEY": "$STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET": "$STRIPE_WEBHOOK_SECRET",
+        "NODE_ENV": "production"
+      },
+      "auto_deploy": true,
+      "logs": {
+        "enable": true,
+        "tool": "Logflare"
+      }
+    }
+  },
+  "cron_jobs": [
+    {
+      "name": "Agent Scheduler",
+      "schedule": "*/5 * * * *",
+      "endpoint": "/agent-scheduler",
+      "frequency": "5 minutes",
+      "description": "Execução automática de agentes para gerar receita a cada 5 minutos"
+    }
+  ],
+  "stripe_webhook": {
+    "url": "/functions/stripe-webhook",
+    "events": [
+      "payment_intent.succeeded",
+      "payment_intent.failed",
+      "charge.succeeded",
+      "charge.failed"
+    ]
+  },
+  "deployment_steps": [
+    {
+      "step": "Initialize Repo",
+      "command": "git clone https://github.com/seu-usuario/xpex-neural"
+    },
+    {
+      "step": "Install Dependencies",
+      "command": "npm install"
+    },
+    {
+      "step": "Deploy to Vercel",
+      "command": "vercel --prod"
+    }
+  ],
+  "performance_monitoring": {
+    "real_time": true,
+    "agent_performance": true,
+    "revenue_tracking": true,
+    "heatmap": true
+  },
+  "security": {
+    "api_keys": {
+      "supabase": "secure_storage",
+      "stripe": "secure_storage"
+    },
+    "auth": {
+      "verify_jwt": true,
+      "rate_limiting": true
+    }
+  },
+  "scalability": {
+    "agent_count": 100,
+    "revenue_per_agent": 0.05,
+    "target_mrr": "$5000+/month"
+  },
+  "modules": {
+    "neural_brain": {
+      "enabled": true,
+      "path": "/neural-brain",
+      "description": "Central de orquestração de agentes autônomos"
+    },
+    "system_audit": {
+      "enabled": true,
+      "path": "/system-audit",
+      "description": "Dashboard de auditoria e diagnóstico do sistema"
+    },
+    "control_center": {
+      "enabled": true,
+      "path": "/control",
+      "description": "Centro de controle para CRON, webhooks e fleet management"
+    },
+    "phoenix": {
+      "enabled": true,
+      "path": "/phoenix",
+      "description": "Sala de controle para execuções manuais e monitoramento"
+    },
+    "payments": {
+      "enabled": true,
+      "path": "/payments",
+      "description": "Gestão de pagamentos via Stripe Connect"
+    },
+    "web3": {
+      "enabled": true,
+      "path": "/web3",
+      "description": "Integração com blockchain e yield farming"
+    }
+  },
+  "edge_functions": [
+    "agent-scheduler",
+    "api-consumer-agent",
+    "api-marketplace",
+    "billing-trigger",
+    "check-connect-status",
+    "create-connect-account",
+    "create-connect-login-link",
+    "execution-runner",
+    "list-stripe-payments",
+    "neural-brain",
+    "payment-bot",
+    "phoenix-api",
+    "stripe-webhook",
+    "system-audit",
+    "volume-generator"
+  ]
+}
