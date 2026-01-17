@@ -26,7 +26,33 @@ serve(async (req) => {
   try {
     logStep("Function started");
     
-    const { action, agent_id, api_product_id, execution_id, amount } = await req.json();
+    let action, agent_id, api_product_id, execution_id, amount;
+    
+    try {
+      const body = await req.json();
+      action = body.action;
+      agent_id = body.agent_id;
+      api_product_id = body.api_product_id;
+      execution_id = body.execution_id;
+      amount = body.amount;
+    } catch {
+      // If no body, return API info
+      return new Response(
+        JSON.stringify({
+          name: "Billing Trigger API",
+          version: "1.0.0",
+          actions: ["create_execution_payment", "get_billing_summary"],
+          status: "operational"
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    // If no action provided, return billing summary by default
+    if (!action) {
+      action = "get_billing_summary";
+    }
+    
     logStep("Request payload", { action, agent_id, api_product_id, execution_id, amount });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");

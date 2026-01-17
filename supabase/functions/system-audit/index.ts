@@ -479,54 +479,81 @@ Deno.serve(async (req) => {
   try {
     const auditor = new SystemAuditor();
     const url = new URL(req.url);
-    const path = url.pathname.split("/").pop();
+    let path = url.pathname.split("/").pop();
 
-    if (req.method === "GET") {
-      switch (path) {
-        case "full":
+    // For POST requests, also check body for path
+    let body: Record<string, unknown> = {};
+    if (req.method === "POST") {
+      try {
+        body = await req.json();
+        // If path is provided in body, use it
+        if (body.path && typeof body.path === "string") {
+          path = body.path;
+        }
+      } catch {
+        // Body parsing failed, continue with URL path
+      }
+    }
+
+    // Handle POST or GET requests based on path
+    switch (path) {
+      case "full":
+      case "full_audit": {
+        const audit = await auditor.runFullAudit();
+        return new Response(JSON.stringify(audit), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "module": {
+        const moduleName = (body.name as string) || url.searchParams.get("name") || "database";
+        const details = await auditor.getModuleDetails(moduleName);
+        return new Response(JSON.stringify(details), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "health": {
+        const healthAudit = await auditor.runFullAudit();
+        return new Response(JSON.stringify({
+          status: healthAudit.overallHealth >= 80 ? "healthy" : "degraded",
+          score: healthAudit.overallHealth,
+          timestamp: healthAudit.timestamp,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "remediate": {
+        const action = body.action as string;
+        const params = (body.params as Record<string, unknown>) || {};
+        if (!action) {
+          return new Response(JSON.stringify({ error: "Action required" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const result = await auditor.runRemediation(action, params);
+        return new Response(JSON.stringify(result), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      default:
+        // Default to full audit for root path
+        if (path === "system-audit" || !path) {
           const audit = await auditor.runFullAudit();
           return new Response(JSON.stringify(audit), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
-
-        case "module":
-          const module = url.searchParams.get("name") || "database";
-          const details = await auditor.getModuleDetails(module);
-          return new Response(JSON.stringify(details), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-
-        case "health":
-          const healthAudit = await auditor.runFullAudit();
-          return new Response(JSON.stringify({
-            status: healthAudit.overallHealth >= 80 ? "healthy" : "degraded",
-            score: healthAudit.overallHealth,
-            timestamp: healthAudit.timestamp,
-          }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-
-        default:
-          return new Response(JSON.stringify({
-            endpoints: ["/full", "/module?name=...", "/health", "/remediate"],
-          }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-      }
+        }
+        return new Response(JSON.stringify({
+          name: "System Audit API",
+          endpoints: ["full", "module?name=...", "health", "remediate"],
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
     }
-
-    if (req.method === "POST" && path === "remediate") {
-      const { action, params } = await req.json();
-      const result = await auditor.runRemediation(action, params || {});
-      return new Response(JSON.stringify(result), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("System audit error:", errorMessage);
