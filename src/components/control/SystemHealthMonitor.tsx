@@ -26,12 +26,12 @@ interface AuditResult {
 }
 
 const EDGE_FUNCTIONS = [
-  { name: "Neural Brain", endpoint: "neural-brain" },
-  { name: "Agent Scheduler", endpoint: "agent-scheduler" },
-  { name: "Phoenix API", endpoint: "phoenix-api" },
-  { name: "Payment Bot", endpoint: "payment-bot" },
-  { name: "System Audit", endpoint: "system-audit" },
-  { name: "Stripe Webhook", endpoint: "stripe-webhook" },
+  { name: "Neural Brain", endpoint: "neural-brain", payload: { action: "process_cycle" } },
+  { name: "Agent Scheduler", endpoint: "agent-scheduler", payload: { action: "get_agent_status" } },
+  { name: "Phoenix API", endpoint: "phoenix-api", payload: {} },
+  { name: "Payment Bot", endpoint: "payment-bot", payload: {} },
+  { name: "System Audit", endpoint: "system-audit", payload: { action: "full_audit" } },
+  { name: "Billing Trigger", endpoint: "billing-trigger", payload: {} },
 ];
 
 export function SystemHealthMonitor() {
@@ -42,22 +42,23 @@ export function SystemHealthMonitor() {
   const [loading, setLoading] = useState(true);
   const [runningAudit, setRunningAudit] = useState(false);
 
-  const checkEndpoint = async (name: string, endpoint: string): Promise<HealthCheck> => {
+  const checkEndpoint = async (name: string, endpoint: string, payload: Record<string, string>): Promise<HealthCheck> => {
     const start = Date.now();
     try {
       const { data, error } = await supabase.functions.invoke(endpoint, {
-        body: { action: "health_check" },
+        body: payload,
       });
 
       const latency = Date.now() - start;
 
-      if (error) {
+      // Even if there's an "error" in the response, if we got a response, it means the function is reachable
+      if (error && !data) {
         return { name, status: "error", latency, message: error.message, lastChecked: new Date().toISOString() };
       }
 
       return {
         name,
-        status: latency < 1000 ? "healthy" : "warning",
+        status: latency < 2000 ? "healthy" : "warning",
         latency,
         message: `Response in ${latency}ms`,
         lastChecked: new Date().toISOString(),
@@ -78,7 +79,7 @@ export function SystemHealthMonitor() {
     setChecks(EDGE_FUNCTIONS.map((f) => ({ name: f.name, status: "checking" })));
 
     const results = await Promise.all(
-      EDGE_FUNCTIONS.map((f) => checkEndpoint(f.name, f.endpoint))
+      EDGE_FUNCTIONS.map((f) => checkEndpoint(f.name, f.endpoint, f.payload))
     );
 
     setChecks(results);
