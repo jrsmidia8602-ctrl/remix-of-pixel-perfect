@@ -1,6 +1,6 @@
-import { DollarSign, Users, Percent, TrendingUp, Wallet, Bot, Zap, CheckCircle } from "lucide-react";
+import { DollarSign, Users, Percent, TrendingUp, Wallet, Bot, Zap, CreditCard, Calendar, CalendarDays } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/MetricCard";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useUnifiedDashboardData } from "@/hooks/useUnifiedDashboardData";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function formatCurrency(value: number): string {
@@ -24,7 +24,7 @@ function formatNumber(value: number): string {
 }
 
 export function RealTimeMetrics() {
-  const { stats, loading } = useDashboardData();
+  const { stats, loading } = useUnifiedDashboardData();
 
   if (loading) {
     return (
@@ -53,6 +53,30 @@ export function RealTimeMetrics() {
       iconColor: "primary",
     },
     {
+      title: "Stripe Revenue",
+      value: formatCurrency(stats.stripeRevenue),
+      change: `${stats.stripePaymentsCount} payments`,
+      changeType: stats.stripeRevenue > 0 ? "positive" : "neutral",
+      icon: CreditCard,
+      iconColor: "accent",
+    },
+    {
+      title: "Weekly Revenue",
+      value: formatCurrency(stats.weeklyRevenue),
+      change: "Last 7 days",
+      changeType: stats.weeklyRevenue > 0 ? "positive" : "neutral",
+      icon: Calendar,
+      iconColor: "success",
+    },
+    {
+      title: "Monthly Revenue",
+      value: formatCurrency(stats.monthlyRevenue),
+      change: "This month",
+      changeType: stats.monthlyRevenue > 0 ? "positive" : "neutral",
+      icon: CalendarDays,
+      iconColor: "primary",
+    },
+    {
       title: "Active Sellers",
       value: formatNumber(stats.activeSellers),
       change: `${stats.activeSellers} verified`,
@@ -72,17 +96,9 @@ export function RealTimeMetrics() {
       title: "Yield Generated",
       value: formatCurrency(stats.yieldGenerated),
       change: "From DeFi",
-      changeType: "neutral",
+      changeType: stats.yieldGenerated > 0 ? "positive" : "neutral",
       icon: TrendingUp,
       iconColor: "accent",
-    },
-    {
-      title: "Crypto Volume",
-      value: `${stats.cryptoVolume.toFixed(2)} ETH`,
-      change: "All chains",
-      changeType: "neutral",
-      icon: Wallet,
-      iconColor: "primary",
     },
     {
       title: "Active Agents",
@@ -91,22 +107,6 @@ export function RealTimeMetrics() {
       changeType: stats.activeBots > 0 ? "positive" : "neutral",
       icon: Bot,
       iconColor: "warning",
-    },
-    {
-      title: "Executions",
-      value: formatNumber(stats.totalExecutions),
-      change: `${stats.successRate.toFixed(1)}% success`,
-      changeType: stats.successRate >= 90 ? "positive" : "neutral",
-      icon: Zap,
-      iconColor: "accent",
-    },
-    {
-      title: "Pending",
-      value: stats.pendingPayments.toString(),
-      change: "Payments queued",
-      changeType: stats.pendingPayments > 5 ? "negative" : "neutral",
-      icon: CheckCircle,
-      iconColor: "success",
     },
   ];
 
