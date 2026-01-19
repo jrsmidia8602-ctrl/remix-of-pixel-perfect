@@ -18,6 +18,9 @@ import Admin from "./pages/Admin";
 import SystemAudit from "./pages/SystemAudit";
 import Phoenix from "./pages/Phoenix";
 import ControlCenter from "./pages/ControlCenter";
+import Pricing from "./pages/Pricing";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -29,6 +32,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-canceled" element={<PaymentCanceled />} />
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/sellers" element={<ProtectedRoute><Sellers /></ProtectedRoute>} />
             <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
