@@ -11,7 +11,8 @@ import {
   Shield,
   Brain,
   Flame,
-  Rocket
+  Rocket,
+  Sparkles
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -33,6 +34,7 @@ const mainNavItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Sellers", url: "/sellers", icon: Users },
   { title: "Payments", url: "/payments", icon: CreditCard },
+  { title: "Pricing", url: "/pricing", icon: Sparkles },
 ];
 
 const web3NavItems = [
