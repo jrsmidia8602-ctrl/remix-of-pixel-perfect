@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_marketplace: {
+        Row: {
+          agent_id: string
+          category: string
+          created_at: string
+          demo_available: boolean | null
+          description: string | null
+          documentation_url: string | null
+          execution_count: number
+          id: string
+          is_featured: boolean | null
+          is_public: boolean | null
+          min_credits_required: number
+          name: string
+          price_per_execution: number
+          rating: number | null
+          rating_count: number | null
+          short_description: string | null
+          status: string
+          tags: string[] | null
+          total_revenue: number
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          category?: string
+          created_at?: string
+          demo_available?: boolean | null
+          description?: string | null
+          documentation_url?: string | null
+          execution_count?: number
+          id?: string
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          min_credits_required?: number
+          name: string
+          price_per_execution?: number
+          rating?: number | null
+          rating_count?: number | null
+          short_description?: string | null
+          status?: string
+          tags?: string[] | null
+          total_revenue?: number
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          category?: string
+          created_at?: string
+          demo_available?: boolean | null
+          description?: string | null
+          documentation_url?: string | null
+          execution_count?: number
+          id?: string
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          min_credits_required?: number
+          name?: string
+          price_per_execution?: number
+          rating?: number | null
+          rating_count?: number | null
+          short_description?: string | null
+          status?: string
+          tags?: string[] | null
+          total_revenue?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_marketplace_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
+            referencedRelation: "autonomous_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_performance: {
         Row: {
           agent_id: string
@@ -230,6 +307,59 @@ export type Database = {
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_usage_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          credits_consumed: number | null
+          endpoint: string
+          id: string
+          ip_address: string | null
+          method: string
+          request_metadata: Json | null
+          response_status: number | null
+          response_time_ms: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          credits_consumed?: number | null
+          endpoint: string
+          id?: string
+          ip_address?: string | null
+          method: string
+          request_metadata?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          credits_consumed?: number | null
+          endpoint?: string
+          id?: string
+          ip_address?: string | null
+          method?: string
+          request_metadata?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_usage_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
             referencedColumns: ["id"]
           },
         ]
@@ -694,6 +824,108 @@ export type Database = {
           },
         ]
       }
+      credit_packs: {
+        Row: {
+          bonus_credits: number | null
+          created_at: string
+          credits_amount: number
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          name: string
+          price_usd: number
+          sort_order: number | null
+          stripe_price_id: string | null
+        }
+        Insert: {
+          bonus_credits?: number | null
+          created_at?: string
+          credits_amount: number
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          name: string
+          price_usd: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+        }
+        Update: {
+          bonus_credits?: number | null
+          created_at?: string
+          credits_amount?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          name?: string
+          price_usd?: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+        }
+        Relationships: []
+      }
+      credit_transactions: {
+        Row: {
+          agent_id: string | null
+          amount: number
+          balance_after: number
+          balance_before: number
+          created_at: string
+          description: string | null
+          execution_id: string | null
+          id: string
+          metadata: Json | null
+          source: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          amount: number
+          balance_after?: number
+          balance_before?: number
+          created_at?: string
+          description?: string | null
+          execution_id?: string | null
+          id?: string
+          metadata?: Json | null
+          source: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          amount?: number
+          balance_after?: number
+          balance_before?: number
+          created_at?: string
+          description?: string | null
+          execution_id?: string | null
+          id?: string
+          metadata?: Json | null
+          source?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "autonomous_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_transactions_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crypto_transactions: {
         Row: {
           amount: string
@@ -1142,6 +1374,42 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_wallets: {
+        Row: {
+          balance_credits: number
+          balance_usd: number
+          created_at: string
+          id: string
+          last_transaction_at: string | null
+          total_earned: number
+          total_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_credits?: number
+          balance_usd?: number
+          created_at?: string
+          id?: string
+          last_transaction_at?: string | null
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_credits?: number
+          balance_usd?: number
+          created_at?: string
+          id?: string
+          last_transaction_at?: string | null
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
