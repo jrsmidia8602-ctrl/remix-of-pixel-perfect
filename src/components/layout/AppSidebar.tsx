@@ -12,7 +12,8 @@ import {
   Brain,
   Flame,
   Rocket,
-  Sparkles
+  Sparkles,
+  Store
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -32,6 +33,7 @@ import {
 
 const mainNavItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Marketplace", url: "/marketplace", icon: Store },
   { title: "Sellers", url: "/sellers", icon: Users },
   { title: "Payments", url: "/payments", icon: CreditCard },
   { title: "Pricing", url: "/pricing", icon: Sparkles },

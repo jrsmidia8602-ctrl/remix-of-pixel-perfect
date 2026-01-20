@@ -21,6 +21,7 @@ import ControlCenter from "./pages/ControlCenter";
 import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
+import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/yield" element={<ProtectedRoute><Yield /></ProtectedRoute>} />
             <Route path="/bots" element={<ProtectedRoute><Bots /></ProtectedRoute>} />
             <Route path="/neural-brain" element={<ProtectedRoute><NeuralBrain /></ProtectedRoute>} />
+            <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="/system-audit" element={<ProtectedRoute><SystemAudit /></ProtectedRoute>} />
