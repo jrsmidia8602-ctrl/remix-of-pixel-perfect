@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Check, Zap, Rocket, Crown, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PricingTier {
   id: string;
@@ -161,8 +163,21 @@ function PricingCard({ tier, onSelect, loading }: { tier: PricingTier; onSelect:
 
 export default function Pricing() {
   const [loadingProduct, setLoadingProduct] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleCheckout = async (productId: string) => {
+    // Check if user is logged in before making the request
+    if (!user) {
+      toast.error("Please log in to purchase credits", {
+        action: {
+          label: "Log in",
+          onClick: () => navigate("/auth"),
+        },
+      });
+      return;
+    }
+
     setLoadingProduct(productId);
     
     try {
@@ -170,12 +185,36 @@ export default function Pricing() {
         body: { productId },
       });
 
-      if (error) throw error;
+      if (error) {
+        // Handle specific error codes
+        if (error.message?.includes("AUTH_REQUIRED") || error.message?.includes("Authentication required")) {
+          toast.error("Please log in to purchase credits", {
+            action: {
+              label: "Log in",
+              onClick: () => navigate("/auth"),
+            },
+          });
+          return;
+        }
+        throw error;
+      }
 
       if (data?.url) {
         // Open Stripe Checkout in new tab
         window.open(data.url, '_blank');
         toast.success("Redirecting to checkout...");
+      } else if (data?.error) {
+        // Handle error from function response
+        if (data.code === "AUTH_REQUIRED") {
+          toast.error("Please log in to purchase credits", {
+            action: {
+              label: "Log in",
+              onClick: () => navigate("/auth"),
+            },
+          });
+        } else {
+          throw new Error(data.error);
+        }
       } else {
         throw new Error("No checkout URL received");
       }
