@@ -2,8 +2,8 @@ import { http, createConfig, createStorage } from "wagmi";
 import { base, mainnet, polygon } from "wagmi/chains";
 import { injected, walletConnect } from "@wagmi/connectors";
 
-// WalletConnect project ID - you can get one at https://cloud.walletconnect.com
-const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
+// WalletConnect project ID
+export const walletConnectProjectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
 
 // Create a custom storage that handles errors gracefully
 const storage = createStorage({
@@ -16,9 +16,10 @@ export const wagmiConfig = createConfig({
   connectors: [
     injected({
       shimDisconnect: true,
+      // Don't auto-detect - only show when user explicitly opens connect dialog
     }),
-    walletConnect({ 
-      projectId,
+    walletConnect({
+      projectId: walletConnectProjectId,
       metadata: {
         name: "XPEX Neural Supreme",
         description: "Multi-Chain Payment Processing Platform",
@@ -29,7 +30,7 @@ export const wagmiConfig = createConfig({
     }),
   ],
   storage,
-  // CRITICAL: Disable auto-reconnect to prevent MetaMask errors on page load
+  // Disable auto-reconnect and discovery completely
   multiInjectedProviderDiscovery: false,
   transports: {
     [base.id]: http(),
