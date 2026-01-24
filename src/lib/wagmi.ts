@@ -15,7 +15,7 @@ export const wagmiConfig = createConfig({
   chains: [base, mainnet, polygon],
   connectors: [
     injected({
-      shimDisconnect: true, // Helps prevent auto-connect issues
+      shimDisconnect: true,
     }),
     walletConnect({ 
       projectId,
@@ -29,8 +29,8 @@ export const wagmiConfig = createConfig({
     }),
   ],
   storage,
-  // Disable auto-connect to prevent MetaMask errors on page load
-  syncConnectedChain: true,
+  // CRITICAL: Disable auto-reconnect to prevent MetaMask errors on page load
+  multiInjectedProviderDiscovery: false,
   transports: {
     [base.id]: http(),
     [mainnet.id]: http(),
