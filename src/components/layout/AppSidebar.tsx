@@ -41,6 +41,7 @@ const mainNavItems = [
 ];
 
 const web3NavItems = [
+  { title: "Full Power", url: "/full-power", icon: Zap },
   { title: "Control Center", url: "/control", icon: Rocket },
   { title: "Demand Radar", url: "/demand-radar", icon: Radar },
   { title: "Phoenix Engine", url: "/phoenix", icon: Flame },
