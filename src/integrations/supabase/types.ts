@@ -981,6 +981,7 @@ export type Database = {
           id: string
           status: string
           step: string
+          user_id: string | null
         }
         Insert: {
           api_key_id?: string | null
@@ -991,6 +992,7 @@ export type Database = {
           id?: string
           status: string
           step: string
+          user_id?: string | null
         }
         Update: {
           api_key_id?: string | null
@@ -1001,6 +1003,7 @@ export type Database = {
           id?: string
           status?: string
           step?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -1032,6 +1035,7 @@ export type Database = {
           response_time_ms: number | null
           revenue: number
           status: string
+          user_id: string | null
         }
         Insert: {
           agent_id?: string | null
@@ -1045,6 +1049,7 @@ export type Database = {
           response_time_ms?: number | null
           revenue?: number
           status?: string
+          user_id?: string | null
         }
         Update: {
           agent_id?: string | null
@@ -1058,6 +1063,7 @@ export type Database = {
           response_time_ms?: number | null
           revenue?: number
           status?: string
+          user_id?: string | null
         }
         Relationships: [
           {
