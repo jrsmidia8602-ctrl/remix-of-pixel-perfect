@@ -51,18 +51,25 @@ serve(async (req) => {
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     logStep("Product found", { productId, priceId: product.priceId, mode: product.mode });
 
-    // Try to get authenticated user (optional for checkout)
+    // Try to get authenticated user (required for credit delivery)
     let userEmail: string | undefined;
+    let userId: string | undefined;
     let customerId: string | undefined;
 
     const authHeader = req.headers.get("Authorization");
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
       const { data } = await supabaseClient.auth.getUser(token);
-      if (data.user?.email) {
+      if (data.user) {
+        userId = data.user.id;
         userEmail = data.user.email;
-        logStep("User authenticated", { email: userEmail });
+        logStep("User authenticated", { userId, email: userEmail });
       }
+    }
+
+    // For credit purchases, user must be authenticated
+    if (product.mode === "payment" && !userId) {
+      throw new Error("Authentication required to purchase credits. Please log in first.");
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
@@ -92,6 +99,7 @@ serve(async (req) => {
       metadata: {
         productId,
         source: "xpex_platform",
+        user_id: userId || "",
       },
     };
 
