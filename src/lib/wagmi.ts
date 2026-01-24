@@ -1,15 +1,22 @@
-import { http, createConfig } from "wagmi";
+import { http, createConfig, createStorage } from "wagmi";
 import { base, mainnet, polygon } from "wagmi/chains";
 import { injected, walletConnect } from "@wagmi/connectors";
 
 // WalletConnect project ID - you can get one at https://cloud.walletconnect.com
-// For development, we'll use a placeholder that works for testing
 const projectId = "3fbb6bba6f1de962d911bb5b5c9dba88";
+
+// Create a custom storage that handles errors gracefully
+const storage = createStorage({
+  storage: typeof window !== "undefined" ? window.localStorage : undefined,
+  key: "xpex-wagmi",
+});
 
 export const wagmiConfig = createConfig({
   chains: [base, mainnet, polygon],
   connectors: [
-    injected(),
+    injected({
+      shimDisconnect: true, // Helps prevent auto-connect issues
+    }),
     walletConnect({ 
       projectId,
       metadata: {
@@ -18,8 +25,12 @@ export const wagmiConfig = createConfig({
         url: typeof window !== "undefined" ? window.location.origin : "https://xpex.io",
         icons: ["https://avatars.githubusercontent.com/u/37784886"],
       },
+      showQrModal: true,
     }),
   ],
+  storage,
+  // Disable auto-connect to prevent MetaMask errors on page load
+  syncConnectedChain: true,
   transports: {
     [base.id]: http(),
     [mainnet.id]: http(),
