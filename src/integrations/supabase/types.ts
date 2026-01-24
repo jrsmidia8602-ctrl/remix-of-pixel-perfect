@@ -777,6 +777,47 @@ export type Database = {
           },
         ]
       }
+      classified_intents: {
+        Row: {
+          analysis_reasoning: string | null
+          classified_at: string | null
+          confidence_score: number
+          created_at: string | null
+          id: string
+          intent_level: Database["public"]["Enums"]["intent_level"]
+          keywords_matched: Json | null
+          signal_id: string | null
+        }
+        Insert: {
+          analysis_reasoning?: string | null
+          classified_at?: string | null
+          confidence_score: number
+          created_at?: string | null
+          id?: string
+          intent_level: Database["public"]["Enums"]["intent_level"]
+          keywords_matched?: Json | null
+          signal_id?: string | null
+        }
+        Update: {
+          analysis_reasoning?: string | null
+          classified_at?: string | null
+          confidence_score?: number
+          created_at?: string | null
+          id?: string
+          intent_level?: Database["public"]["Enums"]["intent_level"]
+          keywords_matched?: Json | null
+          signal_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classified_intents_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "demand_signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connected_wallets: {
         Row: {
           chain_id: number
@@ -968,6 +1009,149 @@ export type Database = {
           tx_hash?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      demand_opportunities: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          demand_score: number
+          description: string | null
+          estimated_delivery_days: number | null
+          estimated_ticket: number | null
+          id: string
+          intent_id: string | null
+          keywords: string[] | null
+          market_opportunity_id: string | null
+          metadata: Json | null
+          prediction_id: string | null
+          recommended_service:
+            | Database["public"]["Enums"]["service_offer_type"]
+            | null
+          signal_id: string | null
+          status: string | null
+          suggested_price: number | null
+          temperature: Database["public"]["Enums"]["demand_temperature"]
+          title: string
+          updated_at: string | null
+          urgency_score: number | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          demand_score: number
+          description?: string | null
+          estimated_delivery_days?: number | null
+          estimated_ticket?: number | null
+          id?: string
+          intent_id?: string | null
+          keywords?: string[] | null
+          market_opportunity_id?: string | null
+          metadata?: Json | null
+          prediction_id?: string | null
+          recommended_service?:
+            | Database["public"]["Enums"]["service_offer_type"]
+            | null
+          signal_id?: string | null
+          status?: string | null
+          suggested_price?: number | null
+          temperature: Database["public"]["Enums"]["demand_temperature"]
+          title: string
+          updated_at?: string | null
+          urgency_score?: number | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          demand_score?: number
+          description?: string | null
+          estimated_delivery_days?: number | null
+          estimated_ticket?: number | null
+          id?: string
+          intent_id?: string | null
+          keywords?: string[] | null
+          market_opportunity_id?: string | null
+          metadata?: Json | null
+          prediction_id?: string | null
+          recommended_service?:
+            | Database["public"]["Enums"]["service_offer_type"]
+            | null
+          signal_id?: string | null
+          status?: string | null
+          suggested_price?: number | null
+          temperature?: Database["public"]["Enums"]["demand_temperature"]
+          title?: string
+          updated_at?: string | null
+          urgency_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demand_opportunities_intent_id_fkey"
+            columns: ["intent_id"]
+            isOneToOne: false
+            referencedRelation: "classified_intents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demand_opportunities_market_opportunity_id_fkey"
+            columns: ["market_opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "market_opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demand_opportunities_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "trend_predictions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demand_opportunities_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "demand_signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demand_signals: {
+        Row: {
+          created_at: string | null
+          detected_at: string | null
+          id: string
+          keyword: string
+          raw_data: Json | null
+          signal_text: string | null
+          signal_volume: number | null
+          source: Database["public"]["Enums"]["demand_source"]
+          source_url: string | null
+          velocity_score: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          detected_at?: string | null
+          id?: string
+          keyword: string
+          raw_data?: Json | null
+          signal_text?: string | null
+          signal_volume?: number | null
+          source: Database["public"]["Enums"]["demand_source"]
+          source_url?: string | null
+          velocity_score?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          detected_at?: string | null
+          id?: string
+          keyword?: string
+          raw_data?: Json | null
+          signal_text?: string | null
+          signal_volume?: number | null
+          source?: Database["public"]["Enums"]["demand_source"]
+          source_url?: string | null
+          velocity_score?: number | null
         }
         Relationships: []
       }
@@ -1363,6 +1547,115 @@ export type Database = {
         }
         Relationships: []
       }
+      service_offers: {
+        Row: {
+          conversions_count: number | null
+          copy_template: string | null
+          created_at: string | null
+          delivery_days: number
+          demand_opportunity_id: string | null
+          description: string | null
+          id: string
+          landing_page_url: string | null
+          metadata: Json | null
+          offer_type: Database["public"]["Enums"]["service_offer_type"]
+          price: number
+          published_at: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          conversions_count?: number | null
+          copy_template?: string | null
+          created_at?: string | null
+          delivery_days: number
+          demand_opportunity_id?: string | null
+          description?: string | null
+          id?: string
+          landing_page_url?: string | null
+          metadata?: Json | null
+          offer_type: Database["public"]["Enums"]["service_offer_type"]
+          price: number
+          published_at?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          conversions_count?: number | null
+          copy_template?: string | null
+          created_at?: string | null
+          delivery_days?: number
+          demand_opportunity_id?: string | null
+          description?: string | null
+          id?: string
+          landing_page_url?: string | null
+          metadata?: Json | null
+          offer_type?: Database["public"]["Enums"]["service_offer_type"]
+          price?: number
+          published_at?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_offers_demand_opportunity_id_fkey"
+            columns: ["demand_opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "demand_opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trend_predictions: {
+        Row: {
+          created_at: string | null
+          id: string
+          intent_id: string | null
+          momentum_index: number | null
+          predicted_at: string | null
+          predicted_growth_rate: number | null
+          prediction_window_days: number | null
+          time_series_data: Json | null
+          trend_score: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          intent_id?: string | null
+          momentum_index?: number | null
+          predicted_at?: string | null
+          predicted_growth_rate?: number | null
+          prediction_window_days?: number | null
+          time_series_data?: Json | null
+          trend_score: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          intent_id?: string | null
+          momentum_index?: number | null
+          predicted_at?: string | null
+          predicted_growth_rate?: number | null
+          prediction_window_days?: number | null
+          time_series_data?: Json | null
+          trend_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trend_predictions_intent_id_fkey"
+            columns: ["intent_id"]
+            isOneToOne: false
+            referencedRelation: "classified_intents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1580,6 +1873,18 @@ export type Database = {
         | "volume_generator"
       app_role: "admin" | "user"
       auth_method: "api_key" | "oauth2" | "jwt" | "none"
+      demand_source:
+        | "google_trends"
+        | "twitter"
+        | "reddit"
+        | "freelance_marketplace"
+        | "manual_input"
+      demand_temperature: "cold" | "warm" | "hot"
+      intent_level:
+        | "curiosity"
+        | "research"
+        | "solution_search"
+        | "purchase_intent"
       opportunity_status:
         | "detected"
         | "scheduled"
@@ -1593,6 +1898,12 @@ export type Database = {
         | "payment_fees"
         | "yield"
         | "other"
+      service_offer_type:
+        | "api_on_demand"
+        | "ready_backend"
+        | "ai_automation"
+        | "white_label_saas"
+        | "express_consulting"
       task_status:
         | "pending"
         | "assigned"
@@ -1741,6 +2052,20 @@ export const Constants = {
       ],
       app_role: ["admin", "user"],
       auth_method: ["api_key", "oauth2", "jwt", "none"],
+      demand_source: [
+        "google_trends",
+        "twitter",
+        "reddit",
+        "freelance_marketplace",
+        "manual_input",
+      ],
+      demand_temperature: ["cold", "warm", "hot"],
+      intent_level: [
+        "curiosity",
+        "research",
+        "solution_search",
+        "purchase_intent",
+      ],
       opportunity_status: [
         "detected",
         "scheduled",
@@ -1755,6 +2080,13 @@ export const Constants = {
         "payment_fees",
         "yield",
         "other",
+      ],
+      service_offer_type: [
+        "api_on_demand",
+        "ready_backend",
+        "ai_automation",
+        "white_label_saas",
+        "express_consulting",
       ],
       task_status: [
         "pending",
