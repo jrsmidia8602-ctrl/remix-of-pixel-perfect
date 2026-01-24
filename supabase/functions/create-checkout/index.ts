@@ -69,7 +69,17 @@ serve(async (req) => {
 
     // For credit purchases, user must be authenticated
     if (product.mode === "payment" && !userId) {
-      throw new Error("Authentication required to purchase credits. Please log in first.");
+      logStep("Authentication required but user not logged in");
+      return new Response(
+        JSON.stringify({ 
+          error: "Authentication required to purchase credits. Please log in first.",
+          code: "AUTH_REQUIRED"
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
