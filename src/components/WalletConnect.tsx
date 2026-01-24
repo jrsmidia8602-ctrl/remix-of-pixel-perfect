@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAccount, useConnect, useDisconnect, useBalance, useSwitchChain } from "wagmi";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +26,25 @@ export function WalletConnect() {
   const [copied, setCopied] = useState(false);
   
   const { address, isConnected, chain } = useAccount();
-  const { connect, connectors, isPending } = useConnect();
+  const { connect, connectors, isPending, error: connectError } = useConnect({
+    mutation: {
+      onError: (error) => {
+        console.error("Wallet connection error:", error);
+        toast({
+          title: "Connection Failed",
+          description: error.message || "Failed to connect wallet. Please try again.",
+          variant: "destructive",
+        });
+      },
+      onSuccess: () => {
+        setDialogOpen(false);
+        toast({
+          title: "Wallet Connected",
+          description: "Your wallet has been connected successfully",
+        });
+      },
+    },
+  });
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
   
@@ -51,22 +68,13 @@ export function WalletConnect() {
     }
   };
 
-  const handleConnect = async (connectorId: string) => {
+  const handleConnect = useCallback((connectorId: string) => {
     const connector = connectors.find((c) => c.id === connectorId);
     if (connector) {
-      try {
-        connect({ connector });
-        setDialogOpen(false);
-      } catch (err) {
-        console.error("Connection error:", err);
-        toast({
-          title: "Connection Failed",
-          description: "Failed to connect wallet. Please try again.",
-          variant: "destructive",
-        });
-      }
+      // Error handling is done in useConnect's onError callback
+      connect({ connector });
     }
-  };
+  }, [connectors, connect]);
 
   const handleDisconnect = () => {
     disconnect();
