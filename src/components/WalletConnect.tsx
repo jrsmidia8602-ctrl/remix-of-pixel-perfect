@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useAccount, useConnect, useDisconnect, useBalance, useSwitchChain } from "wagmi";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,31 +20,30 @@ import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, Loader2, Check } from 
 import { supportedChains } from "@/lib/wagmi";
 import { useToast } from "@/hooks/use-toast";
 
+// Define wallet display options
+const walletDisplayOptions: Record<string, { name: string; description: string; icon: string; gradient: string }> = {
+  injected: {
+    name: "MetaMask",
+    description: "Browser extension wallet",
+    icon: "🦊",
+    gradient: "from-orange-400 to-orange-600",
+  },
+  walletConnect: {
+    name: "WalletConnect",
+    description: "Scan with mobile wallet",
+    icon: "🔗",
+    gradient: "from-blue-400 to-blue-600",
+  },
+};
+
 export function WalletConnect() {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [connectingId, setConnectingId] = useState<string | null>(null);
   
   const { address, isConnected, chain } = useAccount();
-  const { connect, connectors, isPending, error: connectError } = useConnect({
-    mutation: {
-      onError: (error) => {
-        console.error("Wallet connection error:", error);
-        toast({
-          title: "Connection Failed",
-          description: error.message || "Failed to connect wallet. Please try again.",
-          variant: "destructive",
-        });
-      },
-      onSuccess: () => {
-        setDialogOpen(false);
-        toast({
-          title: "Wallet Connected",
-          description: "Your wallet has been connected successfully",
-        });
-      },
-    },
-  });
+  const { connectors, connectAsync } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
   
@@ -68,13 +67,41 @@ export function WalletConnect() {
     }
   };
 
-  const handleConnect = useCallback((connectorId: string) => {
+  const handleConnect = async (connectorId: string) => {
     const connector = connectors.find((c) => c.id === connectorId);
-    if (connector) {
-      // Error handling is done in useConnect's onError callback
-      connect({ connector });
+    if (!connector) return;
+    
+    setConnectingId(connectorId);
+    
+    try {
+      await connectAsync({ connector });
+      
+      setDialogOpen(false);
+      toast({
+        title: "Wallet Connected",
+        description: "Your wallet has been connected successfully",
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.warn("Wallet connection cancelled or failed:", errorMessage);
+      
+      // Only show error toast if it's not a user rejection
+      if (
+        !errorMessage.includes("User rejected") &&
+        !errorMessage.includes("user rejected") &&
+        !errorMessage.includes("cancelled") &&
+        !errorMessage.includes("Connector not connected")
+      ) {
+        toast({
+          title: "Connection Failed",
+          description: "Failed to connect wallet. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setConnectingId(null);
     }
-  }, [connectors, connect]);
+  };
 
   const handleDisconnect = () => {
     disconnect();
@@ -107,39 +134,37 @@ export function WalletConnect() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
-              {connectors.map((connector) => (
-                <Button
-                  key={connector.id}
-                  variant="outline"
-                  className="w-full justify-start gap-3 h-14 border-border hover:bg-muted/50"
-                  onClick={() => handleConnect(connector.id)}
-                  disabled={isPending}
-                >
-                  {connector.id === "injected" && (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-600">
-                      <span className="text-white text-lg">🦊</span>
+              {connectors.map((connector) => {
+                const display = walletDisplayOptions[connector.id] || {
+                  name: connector.name,
+                  description: "Wallet connector",
+                  icon: "💳",
+                  gradient: "from-gray-400 to-gray-600",
+                };
+                
+                return (
+                  <Button
+                    key={connector.id}
+                    variant="outline"
+                    className="w-full justify-start gap-3 h-14 border-border hover:bg-muted/50"
+                    onClick={() => handleConnect(connector.id)}
+                    disabled={connectingId !== null}
+                  >
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${display.gradient}`}>
+                      <span className="text-white text-lg">{display.icon}</span>
                     </div>
-                  )}
-                  {connector.id === "walletConnect" && (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600">
-                      <span className="text-white text-lg">🔗</span>
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{display.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {display.description}
+                      </span>
                     </div>
-                  )}
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">
-                      {connector.id === "injected" ? "MetaMask" : connector.name}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {connector.id === "injected" 
-                        ? "Browser extension wallet" 
-                        : "Scan with mobile wallet"}
-                    </span>
-                  </div>
-                  {isPending && (
-                    <Loader2 className="ml-auto h-4 w-4 animate-spin" />
-                  )}
-                </Button>
-              ))}
+                    {connectingId === connector.id && (
+                      <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                    )}
+                  </Button>
+                );
+              })}
             </div>
           </DialogContent>
         </Dialog>
