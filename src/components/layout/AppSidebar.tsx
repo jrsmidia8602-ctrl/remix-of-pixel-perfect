@@ -13,7 +13,8 @@ import {
   Flame,
   Rocket,
   Sparkles,
-  Store
+  Store,
+  Radar
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -41,6 +42,7 @@ const mainNavItems = [
 
 const web3NavItems = [
   { title: "Control Center", url: "/control", icon: Rocket },
+  { title: "Demand Radar", url: "/demand-radar", icon: Radar },
   { title: "Phoenix Engine", url: "/phoenix", icon: Flame },
   { title: "Neural Brain", url: "/neural-brain", icon: Brain },
   { title: "Web3 Wallet", url: "/web3", icon: Wallet },

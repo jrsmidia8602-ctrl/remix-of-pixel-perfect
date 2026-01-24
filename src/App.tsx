@@ -22,6 +22,7 @@ import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import Marketplace from "./pages/Marketplace";
+import DemandRadar from "./pages/DemandRadar";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/system-audit" element={<ProtectedRoute><SystemAudit /></ProtectedRoute>} />
             <Route path="/phoenix" element={<ProtectedRoute><Phoenix /></ProtectedRoute>} />
             <Route path="/control" element={<ProtectedRoute><ControlCenter /></ProtectedRoute>} />
+            <Route path="/demand-radar" element={<ProtectedRoute><DemandRadar /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
