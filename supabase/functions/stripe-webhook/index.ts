@@ -21,6 +21,122 @@ const logStep = (step: string, details?: unknown) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
+// Credit pack mapping based on product IDs
+const CREDIT_PACKS: Record<string, { credits: number; name: string }> = {
+  'credits_1k': { credits: 1000, name: 'Starter Pack' },
+  'credits_10k': { credits: 10500, name: 'Growth Pack' }, // 10000 + 500 bonus
+  'credits_100k': { credits: 110000, name: 'Enterprise Pack' }, // 100000 + 10000 bonus
+  'pro_monthly': { credits: 5000, name: 'Pro Subscription' },
+  'enterprise_monthly': { credits: 50000, name: 'Enterprise Subscription' },
+};
+
+// Deliver credits to user wallet
+async function deliverCredits(userId: string, productId: string, paymentIntentId: string, amountPaid: number) {
+  const pack = CREDIT_PACKS[productId];
+  if (!pack) {
+    logStep("Unknown product, skipping credit delivery", { productId });
+    return false;
+  }
+
+  logStep("Delivering credits", { userId, productId, credits: pack.credits });
+
+  // Check if this payment was already processed (idempotency)
+  const { data: existingTx } = await supabase
+    .from("credit_transactions")
+    .select("id")
+    .eq("metadata->>stripe_payment_intent_id", paymentIntentId)
+    .single();
+
+  if (existingTx) {
+    logStep("Payment already processed, skipping", { paymentIntentId });
+    return true;
+  }
+
+  // Get or create user wallet
+  const { data: wallet, error: walletError } = await supabase
+    .from("user_wallets")
+    .select("id, balance_credits")
+    .eq("user_id", userId)
+    .single();
+
+  let currentBalance = 0;
+  
+  if (walletError && walletError.code === 'PGRST116') {
+    // No wallet exists, create one
+    logStep("Creating new wallet for user", { userId });
+    const { error: createError } = await supabase
+      .from("user_wallets")
+      .insert({ user_id: userId, balance_credits: 0 });
+    
+    if (createError) {
+      logStep("Error creating wallet", { error: createError.message });
+      return false;
+    }
+  } else if (wallet) {
+    currentBalance = Number(wallet.balance_credits) || 0;
+  }
+
+  const newBalance = currentBalance + pack.credits;
+
+  // Update wallet balance
+  const { error: updateError } = await supabase
+    .from("user_wallets")
+    .update({ 
+      balance_credits: newBalance,
+      last_transaction_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq("user_id", userId);
+
+  if (updateError) {
+    logStep("Error updating wallet balance", { error: updateError.message });
+    return false;
+  }
+
+  // Record transaction
+  const { error: txError } = await supabase
+    .from("credit_transactions")
+    .insert({
+      user_id: userId,
+      amount: pack.credits,
+      transaction_type: "credit",
+      source: "stripe_purchase",
+      balance_before: currentBalance,
+      balance_after: newBalance,
+      description: `Purchased ${pack.name}`,
+      metadata: {
+        stripe_payment_intent_id: paymentIntentId,
+        product_id: productId,
+        amount_paid_cents: amountPaid,
+      }
+    });
+
+  if (txError) {
+    logStep("Error recording transaction", { error: txError.message });
+    // Don't fail - credits were delivered
+  }
+
+  logStep("Credits delivered successfully", { 
+    userId, 
+    credits: pack.credits, 
+    newBalance 
+  });
+
+  return true;
+}
+
+// Get user ID from Stripe customer email
+async function getUserIdFromEmail(email: string): Promise<string | null> {
+  const { data: users } = await supabase.auth.admin.listUsers();
+  
+  if (users?.users) {
+    const user = users.users.find(u => u.email === email);
+    if (user) return user.id;
+  }
+  
+  return null;
+}
+
 // Process v1 classic webhook events
 async function processV1Event(event: Stripe.Event) {
   logStep("Processing v1 event", { type: event.type, id: event.id });
@@ -54,31 +170,54 @@ async function processV1Event(event: Stripe.Event) {
       logStep("Processing checkout.session.completed", { 
         sessionId: session.id,
         paymentIntent: session.payment_intent,
-        amount: session.amount_total
+        amount: session.amount_total,
+        customerEmail: session.customer_email,
+        metadata: session.metadata
       });
 
-      // Record the payment from checkout session
-      if (session.payment_intent && typeof session.payment_intent === 'string') {
-        const { error: insertError } = await supabase
-          .from("payments")
-          .upsert({
-            stripe_payment_intent_id: session.payment_intent,
-            amount: session.amount_total || 0,
-            currency: session.currency || 'usd',
-            status: "succeeded",
-            customer_email: session.customer_email || null,
-            description: `Checkout: ${session.metadata?.productId || 'Unknown product'}`,
-            metadata: session.metadata || {},
-            updated_at: new Date().toISOString(),
-          }, {
-            onConflict: "stripe_payment_intent_id"
-          });
+      const paymentIntentId = typeof session.payment_intent === 'string' 
+        ? session.payment_intent 
+        : session.payment_intent?.id || session.id;
 
-        if (insertError) {
-          logStep("Error recording checkout payment", { error: insertError.message });
+      // Record the payment
+      const { error: insertError } = await supabase
+        .from("payments")
+        .upsert({
+          stripe_payment_intent_id: paymentIntentId,
+          amount: session.amount_total || 0,
+          currency: session.currency || 'usd',
+          status: "succeeded",
+          customer_email: session.customer_email || null,
+          description: `Checkout: ${session.metadata?.productId || 'Unknown product'}`,
+          metadata: session.metadata || {},
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: "stripe_payment_intent_id"
+        });
+
+      if (insertError) {
+        logStep("Error recording checkout payment", { error: insertError.message });
+      } else {
+        logStep("Checkout payment recorded successfully");
+      }
+
+      // CRITICAL: Deliver credits to user
+      const productId = session.metadata?.productId;
+      const customerEmail = session.customer_email;
+
+      if (productId && customerEmail) {
+        const userId = await getUserIdFromEmail(customerEmail);
+        
+        if (userId) {
+          await deliverCredits(userId, productId, paymentIntentId, session.amount_total || 0);
         } else {
-          logStep("Checkout payment recorded successfully");
+          logStep("Could not find user for email", { email: customerEmail });
         }
+      } else {
+        logStep("Missing productId or customerEmail for credit delivery", { 
+          productId, 
+          customerEmail 
+        });
       }
       break;
     }
@@ -171,6 +310,35 @@ async function processV1Event(event: Stripe.Event) {
       break;
     }
 
+    case "customer.subscription.created":
+    case "customer.subscription.updated": {
+      const subscription = event.data.object as Stripe.Subscription;
+      logStep("Processing subscription event", { 
+        subscriptionId: subscription.id,
+        status: subscription.status 
+      });
+
+      // For active subscriptions, deliver monthly credits
+      if (subscription.status === 'active') {
+        const customerEmail = typeof subscription.customer === 'string'
+          ? null  // Need to fetch customer
+          : (subscription.customer as Stripe.Customer)?.email;
+
+        if (customerEmail) {
+          const userId = await getUserIdFromEmail(customerEmail);
+          // Subscription credit logic can be added here
+          logStep("Subscription activated", { userId, customerEmail });
+        }
+      }
+      break;
+    }
+
+    case "customer.subscription.deleted": {
+      const subscription = event.data.object as Stripe.Subscription;
+      logStep("Processing subscription.deleted", { subscriptionId: subscription.id });
+      break;
+    }
+
     default:
       logStep("Unhandled v1 event type", { type: event.type });
   }
@@ -230,6 +398,17 @@ async function processV2Event(v2Event: Record<string, unknown>) {
           logStep("Error recording v2 checkout payment", { error: insertError.message });
         } else {
           logStep("V2 checkout payment recorded successfully");
+        }
+
+        // CRITICAL: Deliver credits for v2 events too
+        const productId = session.metadata?.productId;
+        const customerEmail = session.customer_email;
+
+        if (productId && customerEmail) {
+          const userId = await getUserIdFromEmail(customerEmail);
+          if (userId) {
+            await deliverCredits(userId, productId, paymentIntentId, session.amount_total || 0);
+          }
         }
       }
     } catch (err) {

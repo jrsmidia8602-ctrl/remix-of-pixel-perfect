@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { CreditCard, Copy, ExternalLink, CheckCircle, AlertCircle, Webhook } from "lucide-react";
 import { toast } from "sonner";
 
-const WEBHOOK_URL = "https://ggzdhmltktbcpuwgvljn.supabase.co/functions/v1/stripe-webhook";
+const WEBHOOK_URL = "https://fonwfdpuoyrombdtyyxa.supabase.co/functions/v1/stripe-webhook";
 
 const REQUIRED_EVENTS = [
   { name: "payment_intent.succeeded", description: "Payment completed successfully" },
