@@ -1,30 +1,30 @@
-# FÊNIX 86
+# XP Infrastructure
 
-> Autonomous execution infrastructure for digital products and intelligent agents.
+> AI-native cloud infrastructure for autonomous systems, agent economies, and programmable execution at scale.
 
-[![Status](https://img.shields.io/badge/status-production--ready-success)](https://fenix86.app)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
+[![Status](https://img.shields.io/badge/status-operational-success)](https://xpinfra.io)
+[![Version](https://img.shields.io/badge/version-1.0-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
 ## Overview
 
-FÊNIX 86 is a stable, continuous autonomous execution system designed for digital product operators, API marketplaces, and agent-based automation. Built with a "build once, scale forever" philosophy.
+XP Infrastructure is an enterprise-grade cloud platform designed for developers and AI builders who need reliable, programmable, autonomous infrastructure. Built with a focus on core reliability before expansion.
 
 ### Core Principles
 
-- **Calm Execution**: Predictable, stable operations without surprises
-- **Continuous**: Always-on autonomous processing
-- **Inevitable**: Designed to not break, not stall, not stop
+- **Reliability First**: Stable, predictable operations
+- **Programmable**: API-first, webhook-ready, CRON-enabled
+- **Autonomous**: Self-healing execution with intelligent orchestration
 
 ## Architecture
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Frontend | React + Vite + TypeScript | Dashboard & Control UI |
-| Styling | Tailwind CSS + shadcn/ui | Dark-supreme design system |
-| Backend | Supabase Edge Functions | Serverless execution layer |
-| Database | PostgreSQL | State, logs, telemetry |
-| Payments | Stripe | Credit economy & monetization |
+| Frontend | React + Vite + TypeScript | Dashboard & Console |
+| Styling | Tailwind CSS + shadcn/ui | Enterprise UI System |
+| Backend | Supabase Edge Functions | Serverless Execution |
+| Database | PostgreSQL | State, Logs, Telemetry |
+| Billing | Stripe | Credit Economy |
 
 ## Core Modules
 
@@ -33,10 +33,10 @@ FÊNIX 86 is a stable, continuous autonomous execution system designed for digit
 | Dashboard | `/` | ✅ Active |
 | Marketplace | `/marketplace` | ✅ Active |
 | Control Center | `/control` | ✅ Active |
-| Neural Core | `/neural-brain` | ✅ Active |
-| Phoenix Engine | `/phoenix` | ✅ Active |
+| AI Core | `/neural-brain` | ✅ Active |
+| Execution Engine | `/phoenix` | ✅ Active |
 | Demand Radar | `/demand-radar` | ✅ Active |
-| Full Power | `/full-power` | ✅ Active |
+| Orchestrator | `/full-power` | ✅ Active |
 | Payments | `/payments` | ✅ Active |
 | Web3 Wallet | `/web3` | ✅ Active |
 
@@ -44,7 +44,7 @@ FÊNIX 86 is a stable, continuous autonomous execution system designed for digit
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/fenix-86.git
+git clone https://github.com/xp-infrastructure/xp-infra.git
 
 # Install dependencies
 npm install
@@ -66,13 +66,13 @@ VITE_SUPABASE_PUBLISHABLE_KEY=your_anon_key
 |----------|---------|
 | `agent-scheduler` | CRON-triggered execution cycles |
 | `agent-economy` | Credit transactions & marketplace |
-| `neural-brain` | Central orchestration logic |
+| `neural-brain` | AI orchestration logic |
 | `demand-radar` | Signal detection & processing |
 | `full-power-orchestrator` | Autonomous mode controller |
 | `stripe-webhook` | Payment event processing |
 | `create-checkout` | Stripe checkout sessions |
 
-## External Configuration Required
+## External Configuration
 
 ### Stripe Webhook
 Register webhook URL in Stripe Dashboard:
@@ -94,7 +94,7 @@ src/
 │   ├── control/      # Control center components
 │   ├── dashboard/    # Dashboard components
 │   ├── layout/       # Layout components
-│   ├── neural/       # Neural core components
+│   ├── neural/       # AI core components
 │   ├── radar/        # Demand radar components
 │   └── ui/           # shadcn/ui components
 ├── hooks/            # Custom React hooks
@@ -108,10 +108,17 @@ supabase/
 
 ## Design System
 
-- **Theme**: Dark Supreme
-- **Primary**: `#E63946` (FÊNIX Red)
-- **Background**: `#0B0F14`
+- **Theme**: Dark Enterprise
+- **Primary**: Electric Blue (`#3b82f6`)
+- **Background**: Neutral Black (`#0a0a0a`)
 - **Typography**: Inter (UI) + JetBrains Mono (Data)
+
+## Security
+
+- Row-Level Security (RLS) on all tables
+- Role-based access control
+- API key authentication with rate limiting
+- Secure webhook signature verification
 
 ## License
 
@@ -119,4 +126,4 @@ MIT License
 
 ---
 
-Built with precision by XPEX Systems AI
+Built by XP Infrastructure

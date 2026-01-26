@@ -69,12 +69,13 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        fenix: {
-          red: "hsl(var(--fenix-red))",
-          dark: "hsl(var(--fenix-dark))",
-          panel: "hsl(var(--fenix-panel))",
-          border: "hsl(var(--fenix-border))",
-          muted: "hsl(var(--fenix-muted))",
+        xp: {
+          black: "hsl(var(--xp-black))",
+          steel: "hsl(var(--xp-steel))",
+          blue: "hsl(var(--xp-blue))",
+          panel: "hsl(var(--xp-panel))",
+          border: "hsl(var(--xp-border))",
+          muted: "hsl(var(--xp-muted))",
         },
       },
       borderRadius: {

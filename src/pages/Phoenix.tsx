@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Play, RefreshCw, Activity, DollarSign, Clock } from "lucide-react";
+import { Server, Play, RefreshCw, Activity, DollarSign, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -112,13 +112,13 @@ export default function Phoenix() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg">
-            <Flame className="h-6 w-6 text-white" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+            <Server className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gradient-primary">Phoenix Execution Engine</h1>
+            <h1 className="text-3xl font-bold">Execution Engine</h1>
             <p className="text-muted-foreground">
-              Interface oficial de execução de agentes. Cada disparo gera log, status e rastreio financeiro.
+              Official agent execution interface. Each trigger generates logs, status, and financial tracking.
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Phoenix() {
         <Card className="border-border/50 bg-card/50 backdrop-blur">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg">API Key Configuration</CardTitle>
-            <CardDescription>Enter your Phoenix API key to execute agents</CardDescription>
+            <CardDescription>Enter your Execution Engine API key to run agents</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex gap-4">
@@ -156,7 +156,7 @@ export default function Phoenix() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="task-type">Tipo de Tarefa</Label>
+                <Label htmlFor="task-type">Task Type</Label>
                 <Select value={taskType} onValueChange={setTaskType}>
                   <SelectTrigger id="task-type">
                     <SelectValue placeholder="Select task type" />
@@ -172,7 +172,7 @@ export default function Phoenix() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="priority">Prioridade (1–10)</Label>
+                <Label htmlFor="priority">Priority (1–10)</Label>
                 <Input
                   id="priority"
                   type="number"
@@ -186,7 +186,7 @@ export default function Phoenix() {
               <Button
                 onClick={() => executeMutation.mutate()}
                 disabled={!apiKey || executeMutation.isPending}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+                className="w-full"
               >
                 {executeMutation.isPending ? (
                   <>
@@ -195,8 +195,8 @@ export default function Phoenix() {
                   </>
                 ) : (
                   <>
-                    <Flame className="mr-2 h-4 w-4" />
-                    EXECUTAR AGENTE
+                    <Server className="mr-2 h-4 w-4" />
+                    Execute Agent
                   </>
                 )}
               </Button>
@@ -209,9 +209,9 @@ export default function Phoenix() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5 text-primary" />
-                  Status da Execução
+                  Execution Status
                 </CardTitle>
-                <CardDescription>Phoenix API status and info</CardDescription>
+                <CardDescription>Engine API status and info</CardDescription>
               </div>
               <Button variant="outline" size="icon" onClick={() => refetchStatus()}>
                 <RefreshCw className={`h-4 w-4 ${statusLoading ? "animate-spin" : ""}`} />
@@ -227,7 +227,7 @@ export default function Phoenix() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
                       <p className="text-xs text-muted-foreground">System</p>
-                      <p className="font-semibold">{apiStatus.system || "Phoenix API"}</p>
+                      <p className="font-semibold">{apiStatus.system || "Execution Engine"}</p>
                     </div>
                     <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
                       <p className="text-xs text-muted-foreground">Version</p>
@@ -314,7 +314,7 @@ export default function Phoenix() {
 
         {/* Legend */}
         <p className="text-sm text-muted-foreground text-center">
-          Legenda: Este painel permite disparar agentes, acompanhar execuções e auditar resultados em tempo real.
+          This panel allows you to trigger agents, monitor executions, and audit results in real-time.
         </p>
       </div>
     </DashboardLayout>

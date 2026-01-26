@@ -43,7 +43,7 @@ const Index = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="fenix-panel p-6">
+            <div className="xp-panel p-6">
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Quick Actions</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <button className="flex flex-col items-center gap-2 rounded-lg border border-border bg-muted/30 p-4 transition-all hover:border-primary/50 hover:bg-muted/50">

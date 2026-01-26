@@ -10,7 +10,7 @@ import {
   Zap,
   Shield,
   Brain,
-  Flame,
+  Server,
   Rocket,
   Store,
   Radar,
@@ -41,11 +41,11 @@ const mainNavItems = [
 ];
 
 const executionNavItems = [
-  { title: "Full Power", url: "/full-power", icon: Rocket },
+  { title: "Orchestrator", url: "/full-power", icon: Rocket },
   { title: "Control Center", url: "/control", icon: Activity },
   { title: "Demand Radar", url: "/demand-radar", icon: Radar },
-  { title: "Phoenix Engine", url: "/phoenix", icon: Flame },
-  { title: "Neural Core", url: "/neural-brain", icon: Brain },
+  { title: "Execution Engine", url: "/phoenix", icon: Server },
+  { title: "AI Core", url: "/neural-brain", icon: Brain },
   { title: "Web3 Wallet", url: "/web3", icon: Wallet },
   { title: "Yield", url: "/yield", icon: TrendingUp },
   { title: "Agents", url: "/bots", icon: Bot },
@@ -64,13 +64,13 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-primary glow-primary">
-            <Flame className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
+            <Server className="h-5 w-5 text-primary" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground tracking-tight">FÊNIX 86</span>
-              <span className="text-xs text-muted-foreground font-mono">v1.0.0</span>
+              <span className="text-lg font-bold text-foreground tracking-tight">XP Infra</span>
+              <span className="text-xs text-muted-foreground font-mono">v1.0</span>
             </div>
           )}
         </div>
