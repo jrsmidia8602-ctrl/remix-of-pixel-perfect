@@ -1,177 +1,122 @@
-# XPEX Neural OS
+# FÊNIX 86
 
-> 🧠 Plataforma de Agentes Autônomos com Orquestração Inteligente e Economia de Agentes
+> Autonomous execution infrastructure for digital products and intelligent agents.
 
-[![Deploy Status](https://img.shields.io/badge/deploy-production-brightgreen)](https://exact-frame-vision.lovable.app)
+[![Status](https://img.shields.io/badge/status-production--ready-success)](https://fenix86.app)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
-## 📋 Visão Geral
+## Overview
 
-XPEX Neural OS é uma plataforma completa para gerenciamento de agentes autônomos que executam tarefas de monetização de APIs, pagamentos automatizados e yield farming em tempo real.
+FÊNIX 86 is a stable, continuous autonomous execution system designed for digital product operators, API marketplaces, and agent-based automation. Built with a "build once, scale forever" philosophy.
 
-### 🎯 Recursos Principais
+### Core Principles
 
-- **Neural Brain**: Orquestração central de agentes autônomos
-- **Real-time Monitoring**: Dashboard com métricas ao vivo via Supabase Realtime
-- **Revenue Heatmap**: Visualização de padrões de receita por hora/dia
-- **Agent Performance**: Rankings e métricas de performance por agente
-- **CRON Automation**: Execuções automáticas a cada 5 minutos
-- **Stripe Integration**: Pagamentos e webhooks integrados
-- **Web3 Support**: Yield farming e transações blockchain
+- **Calm Execution**: Predictable, stable operations without surprises
+- **Continuous**: Always-on autonomous processing
+- **Inevitable**: Designed to not break, not stall, not stop
 
-## 🛠️ Stack Tecnológica
+## Architecture
 
-| Tecnologia | Uso |
-|------------|-----|
-| **React 18** | Framework frontend |
-| **TypeScript** | Tipagem estática |
-| **Vite** | Build tool |
-| **Tailwind CSS** | Estilização |
-| **shadcn/ui** | Componentes UI |
-| **Supabase** | Backend & Realtime |
-| **Stripe** | Pagamentos |
-| **Recharts** | Gráficos e visualizações |
-| **wagmi/viem** | Web3 integration |
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Frontend | React + Vite + TypeScript | Dashboard & Control UI |
+| Styling | Tailwind CSS + shadcn/ui | Dark-supreme design system |
+| Backend | Supabase Edge Functions | Serverless execution layer |
+| Database | PostgreSQL | State, logs, telemetry |
+| Payments | Stripe | Credit economy & monetization |
 
-## 🚀 Deploy
+## Core Modules
 
-### Pré-requisitos
+| Module | Route | Status |
+|--------|-------|--------|
+| Dashboard | `/` | ✅ Active |
+| Marketplace | `/marketplace` | ✅ Active |
+| Control Center | `/control` | ✅ Active |
+| Neural Core | `/neural-brain` | ✅ Active |
+| Phoenix Engine | `/phoenix` | ✅ Active |
+| Demand Radar | `/demand-radar` | ✅ Active |
+| Full Power | `/full-power` | ✅ Active |
+| Payments | `/payments` | ✅ Active |
+| Web3 Wallet | `/web3` | ✅ Active |
 
-- Node.js 18+
-- npm ou yarn
-- Conta Supabase (configurada via Lovable Cloud)
-- Conta Stripe (para pagamentos)
-
-### Variáveis de Ambiente
-
-```env
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_webhook_secret
-NODE_ENV=production
-```
-
-### Instalação Local
+## Quick Start
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/xpex-neural.git
+# Clone the repository
+git clone https://github.com/your-org/fenix-86.git
 
-# Navegue para o diretório
-cd xpex-neural
-
-# Instale as dependências
+# Install dependencies
 npm install
 
-# Inicie o servidor de desenvolvimento
+# Start development server
 npm run dev
 ```
 
-### Deploy em Produção
+## Environment Variables
 
-#### Opção 1: Lovable (Recomendado)
-
-1. Acesse [Lovable](https://lovable.dev)
-2. Abra o projeto
-3. Clique em **Share → Publish**
-
-#### Opção 2: Vercel
-
-```bash
-# Instale o Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_anon_key
 ```
 
-## ⚡ CRON Jobs
+## Edge Functions
 
-O sistema utiliza um CRON job externo para execuções automáticas:
+| Function | Purpose |
+|----------|---------|
+| `agent-scheduler` | CRON-triggered execution cycles |
+| `agent-economy` | Credit transactions & marketplace |
+| `neural-brain` | Central orchestration logic |
+| `demand-radar` | Signal detection & processing |
+| `full-power-orchestrator` | Autonomous mode controller |
+| `stripe-webhook` | Payment event processing |
+| `create-checkout` | Stripe checkout sessions |
 
-| Job | Schedule | Endpoint |
-|-----|----------|----------|
-| Agent Scheduler | `*/5 * * * *` | `/functions/v1/agent-scheduler` |
+## External Configuration Required
 
-### Configuração do CRON
+### Stripe Webhook
+Register webhook URL in Stripe Dashboard:
+- **URL**: `https://[project-id].supabase.co/functions/v1/stripe-webhook`
+- **Events**: `checkout.session.completed`, `payment_intent.succeeded`
 
-1. Acesse [cron-job.org](https://cron-job.org) ou similar
-2. Configure a URL: `https://ggzdhmltktbcpuwgvljn.supabase.co/functions/v1/agent-scheduler`
-3. Método: `POST`
-4. Body: `{"action": "run_scheduled_cycle"}`
-5. Schedule: A cada 5 minutos
+### CRON Scheduler
+Configure external CRON (e.g., cron-job.org):
+- **URL**: `https://[project-id].supabase.co/functions/v1/agent-scheduler`
+- **Method**: POST
+- **Schedule**: Every 5 minutes (`*/5 * * * *`)
 
-## 🔗 Stripe Webhooks
-
-Configure o webhook no Stripe Dashboard:
-
-- **URL**: `https://ggzdhmltktbcpuwgvljn.supabase.co/functions/v1/stripe-webhook`
-- **Eventos**:
-  - `payment_intent.succeeded`
-  - `payment_intent.failed`
-  - `charge.succeeded`
-  - `charge.failed`
-
-## 📊 Módulos do Sistema
-
-| Módulo | Rota | Descrição |
-|--------|------|-----------|
-| Dashboard | `/` | Visão geral de métricas e receita |
-| Neural Brain | `/neural-brain` | Orquestração de agentes |
-| System Audit | `/system-audit` | Auditoria e diagnósticos |
-| Control Center | `/control` | Gestão de CRON e webhooks |
-| Phoenix | `/phoenix` | Execuções manuais |
-| Payments | `/payments` | Gestão Stripe Connect |
-| Web3 | `/web3` | Blockchain e yield |
-
-## 🏗️ Arquitetura
+## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── audit/          # Painéis de auditoria
-│   ├── control/        # Controles operacionais
-│   ├── dashboard/      # Componentes do dashboard
-│   ├── layout/         # Layout e navegação
-│   ├── neural/         # Componentes do Neural Brain
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-├── pages/              # Páginas da aplicação
-├── integrations/       # Integrações (Supabase)
-└── lib/                # Utilitários
+│   ├── audit/        # Audit panels
+│   ├── control/      # Control center components
+│   ├── dashboard/    # Dashboard components
+│   ├── layout/       # Layout components
+│   ├── neural/       # Neural core components
+│   ├── radar/        # Demand radar components
+│   └── ui/           # shadcn/ui components
+├── hooks/            # Custom React hooks
+├── pages/            # Route pages
+├── integrations/     # Supabase client
+└── lib/              # Utilities
 
 supabase/
-└── functions/          # Edge Functions
-    ├── agent-scheduler/
-    ├── neural-brain/
-    ├── stripe-webhook/
-    └── ...
+└── functions/        # Edge Functions
 ```
 
-## 📈 Escalabilidade
+## Design System
 
-| Métrica | Target |
-|---------|--------|
-| Agentes | 100+ |
-| Revenue/Agente | $0.05 |
-| MRR Target | $5,000+/mês |
+- **Theme**: Dark Supreme
+- **Primary**: `#E63946` (FÊNIX Red)
+- **Background**: `#0B0F14`
+- **Typography**: Inter (UI) + JetBrains Mono (Data)
 
-## 🔒 Segurança
+## License
 
-- ✅ API Keys em secure storage
-- ✅ JWT verification
-- ✅ Rate limiting
-- ✅ RLS policies no Supabase
-- ✅ Webhooks assinados
-
-## 📄 Licença
-
-MIT License - veja [LICENSE](LICENSE) para detalhes.
+MIT License
 
 ---
 
-<p align="center">
-  Built with ❤️ using <a href="https://lovable.dev">Lovable</a>
-</p>
+Built with precision by XPEX Systems AI

@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -65,12 +69,12 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        crypto: {
-          purple: "hsl(var(--crypto-purple))",
-          blue: "hsl(var(--crypto-blue))",
-          cyan: "hsl(var(--crypto-cyan))",
-          pink: "hsl(var(--crypto-pink))",
-          green: "hsl(var(--crypto-green))",
+        fenix: {
+          red: "hsl(var(--fenix-red))",
+          dark: "hsl(var(--fenix-dark))",
+          panel: "hsl(var(--fenix-panel))",
+          border: "hsl(var(--fenix-border))",
+          muted: "hsl(var(--fenix-muted))",
         },
       },
       borderRadius: {
@@ -89,15 +93,11 @@ export default {
         },
         "pulse-glow": {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+          "50%": { opacity: "0.6" },
         },
         shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-5px)" },
         },
       },
       animation: {
@@ -105,7 +105,6 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
-        float: "float 3s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

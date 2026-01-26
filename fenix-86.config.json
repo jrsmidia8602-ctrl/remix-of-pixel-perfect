@@ -1,0 +1,91 @@
+{
+  "system": {
+    "id": "fenix-86-core",
+    "name": "FÊNIX 86",
+    "codename": "FENIX_86_SUPREME",
+    "version": "1.0.0",
+    "status": "production-ready",
+    "environment": "lovable -> github -> vercel"
+  },
+  "identity": {
+    "brand": {
+      "name": "FÊNIX 86",
+      "tagline": "Execution that doesn't break.",
+      "archetype": "The Architect",
+      "positioning": "autonomous execution infrastructure for digital products and agents"
+    },
+    "visual": {
+      "theme": "dark-supreme",
+      "primary_color": "#E63946",
+      "background_color": "#0B0F14",
+      "panel_color": "#111722",
+      "font_primary": "Inter",
+      "font_mono": "JetBrains Mono"
+    }
+  },
+  "core_modules": [
+    {
+      "name": "Dashboard",
+      "route": "/",
+      "status": "active"
+    },
+    {
+      "name": "Marketplace",
+      "route": "/marketplace",
+      "status": "active"
+    },
+    {
+      "name": "Control Center",
+      "route": "/control",
+      "status": "active"
+    },
+    {
+      "name": "Neural Core",
+      "route": "/neural-brain",
+      "status": "active"
+    },
+    {
+      "name": "Phoenix Engine",
+      "route": "/phoenix",
+      "status": "active"
+    },
+    {
+      "name": "Demand Radar",
+      "route": "/demand-radar",
+      "status": "active"
+    },
+    {
+      "name": "Full Power",
+      "route": "/full-power",
+      "status": "active"
+    }
+  ],
+  "edge_functions": [
+    "agent-scheduler",
+    "agent-economy",
+    "neural-brain",
+    "demand-radar",
+    "full-power-orchestrator",
+    "stripe-webhook",
+    "create-checkout",
+    "phoenix-api"
+  ],
+  "external_dependencies": {
+    "stripe_webhook": {
+      "required": true,
+      "configured": false,
+      "endpoint": "/functions/v1/stripe-webhook"
+    },
+    "cron_scheduler": {
+      "required": true,
+      "configured": false,
+      "endpoint": "/functions/v1/agent-scheduler",
+      "schedule": "*/5 * * * *"
+    }
+  },
+  "meta": {
+    "created_by": "XPEX Systems AI",
+    "ecosystem": "XPEX_SYSTEMS_AI_BRAIN",
+    "last_updated": "2026-01-26"
+  }
+}

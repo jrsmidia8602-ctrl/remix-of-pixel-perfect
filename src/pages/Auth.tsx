@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Loader2, Zap } from "lucide-react";
+import { AlertCircle, Loader2, Flame } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { z } from "zod";
 
@@ -112,18 +112,18 @@ export default function Auth() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
       
-      <Card className="relative w-full max-w-md border-border bg-card/80 backdrop-blur-xl">
+      <Card className="relative w-full max-w-md border-border bg-card/90 backdrop-blur-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent">
-            <Zap className="h-6 w-6 text-white" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg gradient-primary glow-primary">
+            <Flame className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            XPEX Neural Supreme
+          <CardTitle className="text-2xl font-bold text-foreground tracking-tight">
+            FÊNIX 86
           </CardTitle>
-          <CardDescription>
-            Multi-Chain Payment Processing Platform
+          <CardDescription className="text-muted-foreground">
+            Autonomous Execution Infrastructure
           </CardDescription>
         </CardHeader>
         
@@ -142,15 +142,15 @@ export default function Auth() {
           )}
           
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+              <TabsTrigger value="login" className="text-sm">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="text-sm">Sign Up</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email" className="text-sm">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -162,7 +162,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password" className="text-sm">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -175,7 +175,7 @@ export default function Auth() {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  className="w-full gradient-primary hover:opacity-90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -193,18 +193,18 @@ export default function Auth() {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="display-name">Display Name</Label>
+                  <Label htmlFor="display-name" className="text-sm">Display Name</Label>
                   <Input
                     id="display-name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Your name"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     className="bg-muted/50"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email" className="text-sm">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -216,7 +216,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password" className="text-sm">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -228,7 +228,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password" className="text-sm">Confirm Password</Label>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -241,7 +241,7 @@ export default function Auth() {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  className="w-full gradient-primary hover:opacity-90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
