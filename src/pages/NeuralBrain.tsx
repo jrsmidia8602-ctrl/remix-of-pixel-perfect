@@ -34,8 +34,8 @@ export default function NeuralBrain() {
               <Brain className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-                Neural Brain
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                Neural Core
                 <Badge 
                   variant="outline" 
                   className={stats.activeAgents > 0 
@@ -46,8 +46,8 @@ export default function NeuralBrain() {
                   {stats.activeAgents > 0 ? "Active" : "Idle"}
                 </Badge>
               </h1>
-              <p className="text-muted-foreground">
-                Autonomous orchestration system for XPEX operations
+              <p className="text-muted-foreground text-sm">
+                Autonomous agent orchestration and task management.
               </p>
             </div>
           </div>
@@ -118,8 +118,8 @@ export default function NeuralBrain() {
 
         {/* Agent Grid */}
         <div>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Brain className="h-5 w-5 text-crypto-purple" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+            <Brain className="h-4 w-4 text-primary" />
             Autonomous Agents
           </h2>
           {loading ? (

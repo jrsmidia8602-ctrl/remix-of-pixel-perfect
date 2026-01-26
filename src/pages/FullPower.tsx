@@ -60,12 +60,12 @@ export default function FullPower() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-              <Zap className="h-8 w-8 text-yellow-500" />
-              Full Power Mode
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <Zap className="h-6 w-6 text-primary" />
+              Full Power
             </h1>
-            <p className="text-muted-foreground">
-              {status?.system_version || "XPEX-Agent-Economy-1.0.0-FP"}
+            <p className="text-muted-foreground text-sm">
+              {status?.system_version || "FENIX-86-1.0.0"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -87,12 +87,12 @@ export default function FullPower() {
         </div>
 
         {/* Main Action Button */}
-        <Card className="border-2 border-yellow-500/50 bg-gradient-to-r from-yellow-500/10 to-orange-500/10">
+        <Card className="border-2 border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
                   Autonomous Cycle
                 </h2>
                 <p className="text-muted-foreground text-sm mt-1">
@@ -103,7 +103,7 @@ export default function FullPower() {
                 size="lg" 
                 onClick={runCycle} 
                 disabled={running}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                className="gradient-primary hover:opacity-90"
               >
                 {running ? (
                   <>
