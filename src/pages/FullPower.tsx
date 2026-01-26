@@ -20,7 +20,7 @@ import {
   AlertCircle,
   CheckCircle,
   Loader2,
-  Flame,
+  AlertTriangle,
   DollarSign,
   Target,
   Sparkles
@@ -62,10 +62,10 @@ export default function FullPower() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Zap className="h-6 w-6 text-primary" />
-              Full Power
+              Orchestrator
             </h1>
             <p className="text-muted-foreground text-sm">
-              {status?.system_version || "FENIX-86-1.0.0"}
+              {status?.system_version || "XP-INFRA-1.0"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export default function FullPower() {
               {status?.status === "active_full_power" ? (
                 <>
                   <Activity className="h-3 w-3" />
-                  Full Power Active
+                  Orchestrator Active
                 </>
               ) : (
                 "Standby"
@@ -172,7 +172,7 @@ export default function FullPower() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
-                    <Flame className="h-3 w-3 text-orange-500" /> Hot
+                    <AlertTriangle className="h-3 w-3 text-orange-500" /> Hot
                   </span>
                   <span className="font-medium text-orange-500">{status?.modules.demand_radar.hot_opportunities || 0}</span>
                 </div>
@@ -371,7 +371,7 @@ export default function FullPower() {
                     ) : rec.includes("⚠️") ? (
                       <AlertCircle className="h-4 w-4 text-yellow-500 flex-shrink-0" />
                     ) : rec.includes("🔥") ? (
-                      <Flame className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                      <AlertTriangle className="h-4 w-4 text-orange-500 flex-shrink-0" />
                     ) : (
                       <Zap className="h-4 w-4 text-primary flex-shrink-0" />
                     )}

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Loader2, Flame } from "lucide-react";
+import { AlertCircle, Loader2, Server } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { z } from "zod";
 
@@ -116,14 +116,14 @@ export default function Auth() {
       
       <Card className="relative w-full max-w-md border-border bg-card/90 backdrop-blur-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg gradient-primary glow-primary">
-            <Flame className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
+            <Server className="h-6 w-6 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold text-foreground tracking-tight">
-            FÊNIX 86
+            XP Infrastructure
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Autonomous Execution Infrastructure
+            Infrastructure for autonomous systems
           </CardDescription>
         </CardHeader>
         

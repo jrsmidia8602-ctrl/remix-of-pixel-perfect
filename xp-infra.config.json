@@ -1,0 +1,102 @@
+{
+  "system": {
+    "id": "xp-infrastructure",
+    "name": "XP Infrastructure",
+    "short_name": "XP Infra",
+    "version": "1.0",
+    "status": "operational",
+    "category": "Cloud Infrastructure Platform",
+    "type": "AI-Native Infrastructure"
+  },
+  "internal_engine": {
+    "name": "Phoenix 86",
+    "visibility": "internal",
+    "role": "Autonomous execution, recovery, orchestration",
+    "exposed_to_user": false
+  },
+  "branding": {
+    "tagline": "Infrastructure for autonomous systems.",
+    "style": "minimal",
+    "personality": "calm, powerful, precise",
+    "theme": "dark",
+    "colors": {
+      "primary": "#3b82f6",
+      "background": "#0a0a0a",
+      "steel": "#4a5568"
+    },
+    "fonts": {
+      "primary": "Inter",
+      "mono": "JetBrains Mono"
+    }
+  },
+  "modules": {
+    "core": [
+      {
+        "name": "Dashboard",
+        "route": "/",
+        "status": "active"
+      },
+      {
+        "name": "Marketplace",
+        "route": "/marketplace",
+        "status": "active"
+      },
+      {
+        "name": "Control Center",
+        "route": "/control",
+        "status": "active"
+      },
+      {
+        "name": "AI Core",
+        "route": "/neural-brain",
+        "status": "active"
+      },
+      {
+        "name": "Execution Engine",
+        "route": "/phoenix",
+        "status": "active"
+      },
+      {
+        "name": "Demand Radar",
+        "route": "/demand-radar",
+        "status": "active"
+      },
+      {
+        "name": "Orchestrator",
+        "route": "/full-power",
+        "status": "active"
+      }
+    ]
+  },
+  "edge_functions": [
+    "agent-scheduler",
+    "agent-economy",
+    "neural-brain",
+    "demand-radar",
+    "full-power-orchestrator",
+    "stripe-webhook",
+    "create-checkout",
+    "phoenix-api"
+  ],
+  "external_dependencies": {
+    "stripe_webhook": {
+      "required": true,
+      "endpoint": "/functions/v1/stripe-webhook"
+    },
+    "cron_scheduler": {
+      "required": true,
+      "endpoint": "/functions/v1/agent-scheduler",
+      "schedule": "*/5 * * * *"
+    }
+  },
+  "deployment": {
+    "source_control": "GitHub",
+    "platform": "Vercel",
+    "environments": ["development", "staging", "production"]
+  },
+  "meta": {
+    "created_by": "XP Infrastructure",
+    "language": "en-US",
+    "last_updated": "2026-01-26"
+  }
+}
