@@ -1,1 +1,4 @@
 project_id = "fonwfdpuoyrombdtyyxa"
+
+[functions.xp-ai-assistant]
+verify_jwt = false
