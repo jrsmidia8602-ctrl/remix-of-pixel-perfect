@@ -88,13 +88,13 @@ export function XPAIAssistant({ isOpen, onClose }: XPAIAssistantProps) {
             </div>
             <h4 className="font-semibold mb-2">XP Infrastructure AI</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Your infrastructure specialist. Ask me about platform capabilities, integrations, or architecture decisions.
+              Enterprise-grade AI for autonomous infrastructure execution. I'm the product itself — here to guide you.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {[
                 "What is XP Infrastructure?",
-                "How do agents work?",
-                "Explain the credit system",
+                "How do I execute an agent?",
+                "Explain credits and billing",
               ].map((suggestion) => (
                 <Button
                   key={suggestion}
