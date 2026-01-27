@@ -18,9 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
 const contracts = [
-  { name: "XpexSplitVault", address: "0xSplit...Vault", balance: "45.2 ETH" },
-  { name: "XpexYieldVault", address: "0xYield...Vault", balance: "$125,430 TVL" },
-  { name: "XpexNFTFactory", address: "0xNFT...Factory", balance: "1,245 minted" },
+  { name: "SplitVault", address: "0xSplit...Vault", balance: "45.2 ETH" },
+  { name: "YieldVault", address: "0xYield...Vault", balance: "$125,430 TVL" },
+  { name: "NFTFactory", address: "0xNFT...Factory", balance: "1,245 minted" },
 ];
 
 export default function Web3() {

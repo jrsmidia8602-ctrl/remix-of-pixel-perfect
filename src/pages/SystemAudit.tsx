@@ -29,14 +29,14 @@ export default function SystemAudit() {
   const handleExportReport = (format: string) => {
     if (!auditData) return;
 
-    const filename = `xpex-audit-${new Date().toISOString().split("T")[0]}.${format}`;
+    const filename = `xp-infra-audit-${new Date().toISOString().split("T")[0]}.${format}`;
     let content: string;
 
     if (format === "json") {
       content = JSON.stringify(auditData, null, 2);
     } else {
       // Generate markdown report
-      content = `# XPEX Neural Supreme - System Audit Report
+      content = `# XP Infrastructure - System Audit Report
       
 **Generated:** ${new Date(auditData.timestamp).toLocaleString()}
 **Overall Health Score:** ${auditData.overallHealth}%
@@ -126,7 +126,7 @@ ${auditData.modules.flatMap(m => m.recommendations.map(r => `- [${m.module}] ${r
               System Audit Dashboard
             </h1>
             <p className="text-muted-foreground">
-              XPEX Neural Supreme v2.0.0 • Comprehensive Analysis
+              XP Infrastructure v1.0.0 • Comprehensive Analysis
             </p>
           </div>
           <div className="flex items-center gap-2">

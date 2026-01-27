@@ -1,6 +1,6 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount, useChainId } from 'wagmi';
 import { parseEther, formatEther } from 'viem';
-import { XPEX_SPLIT_VAULT_ABI, XPEX_YIELD_VAULT_ABI, CONTRACT_ADDRESSES, SupportedChainId } from '@/lib/contracts';
+import { XP_SPLIT_VAULT_ABI, XP_YIELD_VAULT_ABI, CONTRACT_ADDRESSES, SupportedChainId } from '@/lib/contracts';
 import { useState, useEffect, useCallback } from 'react';
 import { base, mainnet, polygon } from 'wagmi/chains';
 
@@ -21,7 +21,7 @@ export function useVaultContracts() {
   // Split Vault Read Functions
   const { data: splitVaultBalance, refetch: refetchSplitBalance } = useReadContract({
     address: contracts.splitVault,
-    abi: XPEX_SPLIT_VAULT_ABI,
+    abi: XP_SPLIT_VAULT_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: { enabled: !!address && isConnected },
@@ -29,7 +29,7 @@ export function useVaultContracts() {
 
   const { data: splitPendingRewards, refetch: refetchSplitRewards } = useReadContract({
     address: contracts.splitVault,
-    abi: XPEX_SPLIT_VAULT_ABI,
+    abi: XP_SPLIT_VAULT_ABI,
     functionName: 'pendingRewards',
     args: address ? [address] : undefined,
     query: { enabled: !!address && isConnected },
@@ -37,14 +37,14 @@ export function useVaultContracts() {
 
   const { data: splitTotalDeposits } = useReadContract({
     address: contracts.splitVault,
-    abi: XPEX_SPLIT_VAULT_ABI,
+    abi: XP_SPLIT_VAULT_ABI,
     functionName: 'totalDeposits',
     query: { enabled: isConnected },
   });
 
   const { data: splitRatio } = useReadContract({
     address: contracts.splitVault,
-    abi: XPEX_SPLIT_VAULT_ABI,
+    abi: XP_SPLIT_VAULT_ABI,
     functionName: 'splitRatio',
     query: { enabled: isConnected },
   });
@@ -52,7 +52,7 @@ export function useVaultContracts() {
   // Yield Vault Read Functions
   const { data: yieldVaultBalance, refetch: refetchYieldBalance } = useReadContract({
     address: contracts.yieldVault,
-    abi: XPEX_YIELD_VAULT_ABI,
+    abi: XP_YIELD_VAULT_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: { enabled: !!address && isConnected },
@@ -60,14 +60,14 @@ export function useVaultContracts() {
 
   const { data: yieldTotalAssets } = useReadContract({
     address: contracts.yieldVault,
-    abi: XPEX_YIELD_VAULT_ABI,
+    abi: XP_YIELD_VAULT_ABI,
     functionName: 'totalAssets',
     query: { enabled: isConnected },
   });
 
   const { data: yieldCurrentAPY } = useReadContract({
     address: contracts.yieldVault,
-    abi: XPEX_YIELD_VAULT_ABI,
+    abi: XP_YIELD_VAULT_ABI,
     functionName: 'currentAPY',
     query: { enabled: isConnected },
   });
@@ -100,7 +100,7 @@ export function useVaultContracts() {
     const value = parseEther(amount);
     writeContract({
       address: contracts.splitVault,
-      abi: XPEX_SPLIT_VAULT_ABI,
+      abi: XP_SPLIT_VAULT_ABI,
       functionName: 'deposit',
       args: [value],
       value,
@@ -113,7 +113,7 @@ export function useVaultContracts() {
     if (!address) return;
     writeContract({
       address: contracts.splitVault,
-      abi: XPEX_SPLIT_VAULT_ABI,
+      abi: XP_SPLIT_VAULT_ABI,
       functionName: 'withdraw',
       args: [parseEther(shares)],
       account: address,
@@ -125,7 +125,7 @@ export function useVaultContracts() {
     if (!address) return;
     writeContract({
       address: contracts.splitVault,
-      abi: XPEX_SPLIT_VAULT_ABI,
+      abi: XP_SPLIT_VAULT_ABI,
       functionName: 'claimRewards',
       account: address,
       chain: currentChain,
@@ -138,7 +138,7 @@ export function useVaultContracts() {
     const value = parseEther(amount);
     writeContract({
       address: contracts.yieldVault,
-      abi: XPEX_YIELD_VAULT_ABI,
+      abi: XP_YIELD_VAULT_ABI,
       functionName: 'deposit',
       args: [value],
       value,
@@ -151,7 +151,7 @@ export function useVaultContracts() {
     if (!address) return;
     writeContract({
       address: contracts.yieldVault,
-      abi: XPEX_YIELD_VAULT_ABI,
+      abi: XP_YIELD_VAULT_ABI,
       functionName: 'withdraw',
       args: [parseEther(shares)],
       account: address,
@@ -163,7 +163,7 @@ export function useVaultContracts() {
     if (!address) return;
     writeContract({
       address: contracts.yieldVault,
-      abi: XPEX_YIELD_VAULT_ABI,
+      abi: XP_YIELD_VAULT_ABI,
       functionName: 'harvest',
       account: address,
       chain: currentChain,
