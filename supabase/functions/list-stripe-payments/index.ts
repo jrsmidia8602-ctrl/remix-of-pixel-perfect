@@ -25,19 +25,29 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Authenticate user
+    // Authenticate user via Authorization header
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("No authorization header provided");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized", code: "AUTH_REQUIRED" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData.user) {
-      throw new Error("User not authenticated");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims?.sub) {
+      logStep("Auth failed", { error: claimsError?.message });
+      return new Response(
+        JSON.stringify({ error: "Invalid or expired token", code: "AUTH_INVALID" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    logStep("User authenticated", { userId: userData.user.id });
+    const userId = claimsData.claims.sub as string;
+
+    logStep("User authenticated", { userId });
 
     const { limit = 50 } = await req.json().catch(() => ({}));
 
@@ -50,7 +60,7 @@ serve(async (req) => {
     const { data: roleData } = await supabaseClient
       .from("user_roles")
       .select("role")
-      .eq("user_id", userData.user.id)
+      .eq("user_id", userId)
       .eq("role", "admin")
       .maybeSingle();
 
@@ -70,7 +80,7 @@ serve(async (req) => {
       const { data: sellerData } = await supabaseClient
         .from("sellers")
         .select("stripe_account_id")
-        .eq("user_id", userData.user.id)
+        .eq("user_id", userId)
         .maybeSingle();
 
       if (sellerData?.stripe_account_id) {
