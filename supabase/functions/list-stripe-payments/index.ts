@@ -35,17 +35,19 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
+
+    // Use JWT claims to authenticate (getClaims)
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    
-    if (claimsError || !claimsData?.claims?.sub) {
+
+    const userId = claimsData?.claims?.sub ?? claimsData?.sub;
+
+    if (claimsError || !userId) {
       logStep("Auth failed", { error: claimsError?.message });
       return new Response(
         JSON.stringify({ error: "Invalid or expired token", code: "AUTH_INVALID" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const userId = claimsData.claims.sub as string;
 
     logStep("User authenticated", { userId });
 
@@ -56,7 +58,7 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Check if user is admin or get their seller account
+    // Check if user is admin
     const { data: roleData } = await supabaseClient
       .from("user_roles")
       .select("role")
@@ -72,26 +74,30 @@ serve(async (req) => {
       // Admin can see all payments
       logStep("Fetching all payments (admin)");
       const paymentIntents = await stripe.paymentIntents.list({
-        limit: Math.min(limit, 100),
+        limit: Math.min(Number(limit), 100),
       });
       payments = paymentIntents.data;
     } else {
-      // Get user's seller account
+      // Get user's seller account by userId from claims
       const { data: sellerData } = await supabaseClient
         .from("sellers")
         .select("stripe_account_id")
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (sellerData?.stripe_account_id) {
-        logStep("Fetching payments for seller", { stripeAccountId: sellerData.stripe_account_id });
-        // Fetch payments for this connected account
+      const stripeAccountId = sellerData?.stripe_account_id;
+
+      if (stripeAccountId) {
+        logStep("Fetching payments for seller", { stripeAccountId });
         const paymentIntents = await stripe.paymentIntents.list({
-          limit: Math.min(limit, 100),
+          limit: Math.min(Number(limit), 100),
         }, {
-          stripeAccount: sellerData.stripe_account_id,
+          stripeAccount: stripeAccountId,
         });
         payments = paymentIntents.data;
+      } else {
+        logStep("No seller account found for user", { userId });
+        payments = [];
       }
     }
 
