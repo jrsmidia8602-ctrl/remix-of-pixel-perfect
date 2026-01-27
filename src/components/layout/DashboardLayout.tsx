@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { TopNav } from "./TopNav";
+import { AIAssistantButton } from "@/components/ai/AIAssistantButton";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {children}
           </main>
         </SidebarInset>
+        <AIAssistantButton />
       </div>
     </SidebarProvider>
   );
