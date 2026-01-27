@@ -39,7 +39,7 @@ serve(async (req) => {
     // Use JWT claims to authenticate (getClaims)
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
 
-    const userId = claimsData?.claims?.sub ?? claimsData?.sub;
+    const userId = claimsData?.claims?.sub as string | undefined;
 
     if (claimsError || !userId) {
       logStep("Auth failed", { error: claimsError?.message });
