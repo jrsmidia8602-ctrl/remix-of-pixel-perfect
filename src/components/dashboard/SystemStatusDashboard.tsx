@@ -114,9 +114,9 @@ export function SystemStatusDashboard() {
   const getStatusBadge = (status: ModuleStatus["status"]) => {
     switch (status) {
       case "operational":
-        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Operacional</Badge>;
+        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Operational</Badge>;
       case "degraded":
-        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Degradado</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Degraded</Badge>;
       case "down":
         return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Offline</Badge>;
     }
@@ -125,11 +125,11 @@ export function SystemStatusDashboard() {
   const getCronHealthBadge = (health: SystemMetrics["cronHealth"]) => {
     switch (health) {
       case "healthy":
-        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Saudável</Badge>;
+        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Healthy</Badge>;
       case "warning":
-        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Atenção</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Warning</Badge>;
       case "error":
-        return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Erro</Badge>;
+        return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Error</Badge>;
     }
   };
 
@@ -154,7 +154,7 @@ export function SystemStatusDashboard() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Activity className="h-5 w-5 text-primary" />
-              Status do Sistema XPEX Neural OS
+              XP Infrastructure System Status
             </CardTitle>
             <Badge variant="outline" className="text-xs">
               v1.0.0
@@ -164,7 +164,7 @@ export function SystemStatusDashboard() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Saúde Geral</span>
+              <span className="text-sm text-muted-foreground">Overall Health</span>
               <span className="font-bold">{overallHealth.toFixed(0)}%</span>
             </div>
             <Progress value={overallHealth} className="h-3" />
@@ -173,7 +173,7 @@ export function SystemStatusDashboard() {
               <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
                 <Bot className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Agentes</p>
+                  <p className="text-xs text-muted-foreground">Agents</p>
                   <p className="font-semibold">{metrics?.activeAgents}/{metrics?.totalAgents}</p>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export function SystemStatusDashboard() {
               <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
                 <Zap className="h-4 w-4 text-yellow-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Execuções (24h)</p>
+                  <p className="text-xs text-muted-foreground">Executions (24h)</p>
                   <p className="font-semibold">{metrics?.totalExecutions}</p>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export function SystemStatusDashboard() {
               <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
                 <Shield className="h-4 w-4 text-green-500" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Taxa Sucesso</p>
+                  <p className="text-xs text-muted-foreground">Success Rate</p>
                   <p className="font-semibold">{metrics?.successRate.toFixed(1)}%</p>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function SystemStatusDashboard() {
               <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
                 <CreditCard className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Receita (24h)</p>
+                  <p className="text-xs text-muted-foreground">Revenue (24h)</p>
                   <p className="font-semibold">${metrics?.totalRevenue.toFixed(2)}</p>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export function SystemStatusDashboard() {
               {metrics && getCronHealthBadge(metrics.cronHealth)}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Execução a cada 5 minutos
+              Runs every 5 minutes
             </p>
           </CardContent>
         </Card>
@@ -233,13 +233,13 @@ export function SystemStatusDashboard() {
                 <span className="font-medium">Stripe</span>
               </div>
               {metrics?.stripeConnected ? (
-                <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Conectado</Badge>
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Connected</Badge>
               ) : (
-                <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Desconectado</Badge>
+                <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Disconnected</Badge>
               )}
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Webhooks configurados
+              Webhooks configured
             </p>
           </CardContent>
         </Card>
@@ -257,7 +257,7 @@ export function SystemStatusDashboard() {
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Supabase Realtime ativo
+              Realtime active
             </p>
           </CardContent>
         </Card>
@@ -268,7 +268,7 @@ export function SystemStatusDashboard() {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Server className="h-5 w-5 text-primary" />
-            Status dos Módulos
+            Module Status
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -291,7 +291,7 @@ export function SystemStatusDashboard() {
                     href={module.path} 
                     className="text-xs text-primary hover:underline"
                   >
-                    Abrir →
+                    Open →
                   </a>
                 </div>
               </div>

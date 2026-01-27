@@ -1,5 +1,5 @@
-// XpexSplitVault ABI - Revenue splitting vault
-export const XPEX_SPLIT_VAULT_ABI = [
+// SplitVault ABI - Revenue splitting vault
+export const XP_SPLIT_VAULT_ABI = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -85,8 +85,8 @@ export const XPEX_SPLIT_VAULT_ABI = [
   },
 ] as const;
 
-// XpexYieldVault ABI - Yield optimization vault
-export const XPEX_YIELD_VAULT_ABI = [
+// YieldVault ABI - Yield optimization vault
+export const XP_YIELD_VAULT_ABI = [
   {
     inputs: [],
     stateMutability: "nonpayable",

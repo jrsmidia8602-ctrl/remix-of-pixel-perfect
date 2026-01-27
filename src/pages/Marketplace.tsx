@@ -32,10 +32,10 @@ export default function Marketplace() {
   const [executingAgent, setExecutingAgent] = useState<string | null>(null);
 
   const categories = [
-    { id: "all", label: "Todos", icon: Bot },
+    { id: "all", label: "All", icon: Bot },
     { id: "data", label: "Data", icon: Activity },
-    { id: "payment", label: "Pagamentos", icon: CreditCard },
-    { id: "automation", label: "Automação", icon: Zap },
+    { id: "payment", label: "Payments", icon: CreditCard },
+    { id: "automation", label: "Automation", icon: Zap },
     { id: "blockchain", label: "Blockchain", icon: Package },
   ];
 
@@ -70,7 +70,7 @@ export default function Marketplace() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Agent Marketplace</h1>
             <p className="text-muted-foreground">
-              Execute agentes autônomos e pague apenas pelo que usar
+              Execute autonomous agents and pay only for what you use
             </p>
           </div>
           
@@ -81,22 +81,22 @@ export default function Marketplace() {
                 <Wallet className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Saldo</p>
+                <p className="text-sm text-muted-foreground">Balance</p>
                 <p className="text-2xl font-bold">{wallet?.balance_credits.toFixed(2) || "0.00"}</p>
-                <p className="text-xs text-muted-foreground">créditos</p>
+                <p className="text-xs text-muted-foreground">credits</p>
               </div>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" className="ml-4">
                     <ShoppingCart className="h-4 w-4 mr-1" />
-                    Comprar
+                    Buy
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle>Comprar Créditos</DialogTitle>
+                    <DialogTitle>Buy Credits</DialogTitle>
                     <DialogDescription>
-                      Escolha um pacote de créditos para executar agentes
+                      Choose a credit pack to execute agents
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -123,12 +123,12 @@ export default function Marketplace() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="h-4 w-4 text-primary" />
-                              <span>{pack.credits_amount} créditos</span>
+                              <span>{pack.credits_amount} credits</span>
                             </div>
                             {pack.bonus_credits > 0 && (
                               <div className="flex items-center gap-2 text-primary">
                                 <Sparkles className="h-4 w-4" />
-                                <span>+{pack.bonus_credits} bônus</span>
+                                <span>+{pack.bonus_credits} bonus</span>
                               </div>
                             )}
                           </div>
@@ -137,7 +137,7 @@ export default function Marketplace() {
                             variant={pack.is_featured ? "default" : "outline"}
                             onClick={() => purchaseCredits(pack.id)}
                           >
-                            Comprar
+                            Buy
                             <ArrowRight className="h-4 w-4 ml-2" />
                           </Button>
                         </CardContent>
@@ -154,11 +154,11 @@ export default function Marketplace() {
           <TabsList>
             <TabsTrigger value="agents">
               <Bot className="h-4 w-4 mr-2" />
-              Agentes
+              Agents
             </TabsTrigger>
             <TabsTrigger value="history">
               <Clock className="h-4 w-4 mr-2" />
-              Histórico
+              History
             </TabsTrigger>
           </TabsList>
 
@@ -168,7 +168,7 @@ export default function Marketplace() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar agentes..."
+                  placeholder="Search agents..."
                   className="pl-10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -209,9 +209,9 @@ export default function Marketplace() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Nenhum agente encontrado</h3>
+                  <h3 className="text-lg font-medium mb-2">No agents found</h3>
                   <p className="text-muted-foreground">
-                    Tente ajustar seus filtros ou termo de busca
+                    Try adjusting your filters or search term
                   </p>
                 </CardContent>
               </Card>
@@ -237,7 +237,7 @@ export default function Marketplace() {
                               {agent.is_featured && (
                                 <Badge className="text-xs bg-yellow-500">
                                   <Star className="h-3 w-3 mr-1" />
-                                  Destaque
+                                  Featured
                                 </Badge>
                               )}
                             </div>
@@ -251,14 +251,14 @@ export default function Marketplace() {
                       </p>
                       
                       {/* Stats */}
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <Play className="h-3 w-3" />
-                          <span>{agent.execution_count} execuções</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <TrendingUp className="h-3 w-3" />
-                          <span>${agent.total_revenue.toFixed(2)}</span>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Play className="h-3 w-3" />
+                            <span>{agent.execution_count} executions</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <TrendingUp className="h-3 w-3" />
+                            <span>${agent.total_revenue.toFixed(2)}</span>
                         </div>
                       </div>
 
@@ -279,9 +279,9 @@ export default function Marketplace() {
 
                       {/* Price and Execute */}
                       <div className="flex items-center justify-between pt-2 border-t">
-                        <div>
-                          <span className="text-xl font-bold">{agent.price_per_execution}</span>
-                          <span className="text-sm text-muted-foreground"> créditos/exec</span>
+                          <div>
+                            <span className="text-xl font-bold">{agent.price_per_execution}</span>
+                            <span className="text-sm text-muted-foreground"> credits/exec</span>
                         </div>
                         <Button
                           size="sm"
@@ -311,14 +311,14 @@ export default function Marketplace() {
           <TabsContent value="history">
             <Card>
               <CardHeader>
-                <CardTitle>Histórico de Transações</CardTitle>
+                <CardTitle>Transaction History</CardTitle>
                 <CardDescription>
-                  Suas últimas transações de créditos
+                  Your latest credit transactions
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-center py-8">
-                  Funcionalidade em desenvolvimento...
+                  Feature in development...
                 </p>
               </CardContent>
             </Card>

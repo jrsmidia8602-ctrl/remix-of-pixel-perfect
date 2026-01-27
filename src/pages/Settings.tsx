@@ -68,7 +68,7 @@ export default function Settings() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="company">Company</Label>
-                      <Input id="company" placeholder="XPEX Inc." className="bg-muted/50" />
+                      <Input id="company" placeholder="Acme Inc." className="bg-muted/50" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="role">Role</Label>
@@ -187,7 +187,7 @@ export default function Settings() {
                       <Button variant="ghost" size="sm">Regenerate</Button>
                     </div>
                     <code className="block rounded bg-muted p-3 text-sm font-mono">
-                      xpex_live_sk_••••••••••••••••••••••••
+                      xp_live_sk_••••••••••••••••••••••••
                     </code>
                   </div>
                   <div className="rounded-lg border border-border p-4">
@@ -196,7 +196,7 @@ export default function Settings() {
                       <Button variant="ghost" size="sm">Regenerate</Button>
                     </div>
                     <code className="block rounded bg-muted p-3 text-sm font-mono">
-                      xpex_test_sk_••••••••••••••••••••••••
+                      xp_test_sk_••••••••••••••••••••••••
                     </code>
                   </div>
                   <Button className="gradient-primary text-primary-foreground">Create New Key</Button>
@@ -220,7 +220,7 @@ export default function Settings() {
                       <Button variant="ghost" size="sm">Edit</Button>
                     </div>
                     <code className="block rounded bg-muted p-3 text-sm font-mono">
-                      https://api.yourapp.com/webhooks/xpex
+                      https://api.yourapp.com/webhooks/xp-infra
                     </code>
                   </div>
                   <Button className="gradient-primary text-primary-foreground">Add Webhook</Button>
