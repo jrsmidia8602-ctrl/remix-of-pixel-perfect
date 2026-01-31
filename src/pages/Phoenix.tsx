@@ -80,7 +80,7 @@ export default function Phoenix() {
     },
     onSuccess: (data) => {
       toast({
-        title: "Execução iniciada com sucesso",
+        title: "Execution started successfully",
         description: `Execution ID: ${data?.execution_id || "N/A"}`,
       });
       refetchLogs();
@@ -88,7 +88,7 @@ export default function Phoenix() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Erro na execução",
+        title: "Execution error",
         description: error.message,
         variant: "destructive",
       });
